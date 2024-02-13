@@ -20,13 +20,9 @@ function useForm(method, action, redirectPath) {
   const handleFormRequest = async (isFormValid = false, data = {}) => {
     if (isFormValid) {
       try {
-        const reqRes = await sendRequest(
-          method,
-          // eslint-disable-next-line no-undef
-          apiUrl + action,
-          data,
-          { "Content-Type": "application/json" }
-        );
+        const reqRes = await sendRequest(method, apiUrl + action, data, {
+          "Content-Type": "application/json",
+        });
 
         if (reqRes.ok) {
           const success = await reqRes.json();
