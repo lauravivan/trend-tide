@@ -3,6 +3,8 @@ import sendRequest from "util/request";
 import { useAuthContext } from "context/authContext";
 import { useNavigate } from "react-router-dom";
 
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
+
 function useForm(method, action, redirectPath) {
   const { signIn } = useAuthContext();
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ function useForm(method, action, redirectPath) {
         const reqRes = await sendRequest(
           method,
           // eslint-disable-next-line no-undef
-          process.env.REACT_APP_BACKEND_URL + action,
+          apiUrl + action,
           data,
           { "Content-Type": "application/json" }
         );
