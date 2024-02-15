@@ -2,7 +2,15 @@
 import { VisibilityIcon, VisibilityOffIcon } from "icons/Icon";
 import { useState } from "react";
 
-const Input = ({ type, id, className, placeholder, name, onChange }) => {
+const Input = ({
+  type,
+  id,
+  className,
+  placeholder,
+  name,
+  onChange,
+  maxLength,
+}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [coverPass, setCoverPass] = useState("password");
 
@@ -23,7 +31,7 @@ const Input = ({ type, id, className, placeholder, name, onChange }) => {
           type={coverPass}
           placeholder={placeholder}
           className={`rounded-md px-2 py-3 outline-none w-full ${className}`}
-          maxLength={50}
+          maxLength={maxLength}
           autoComplete="off"
           onChange={onChange}
           id={id}
@@ -54,7 +62,7 @@ const Input = ({ type, id, className, placeholder, name, onChange }) => {
       type={type}
       placeholder={placeholder}
       className={`rounded-md px-2 py-3 outline-none w-full ${className}`}
-      maxLength={50}
+      maxLength={maxLength}
       autoComplete="off"
       onChange={onChange}
       id={id}

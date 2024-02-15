@@ -1,5 +1,5 @@
 import { useRouteError } from "react-router-dom";
-import CatSvg from "svg/Cat";
+import Cat from "UIElements/Cat";
 
 const NotFound = () => {
   const error = useRouteError();
@@ -16,7 +16,7 @@ const NotFound = () => {
             {error.statusText || error.message}
           </span>
           <div className="flex flex-1 m-auto">
-            <CatSvg className="w-52 sm:w-72 lg:w-64 2xl:w-[30rem] transition-width ease-in-out duration-1000" />
+            <Cat className="w-52 sm:w-72 lg:w-64 2xl:w-[30rem] transition-width ease-in-out duration-1000" />
           </div>
         </div>
       </div>

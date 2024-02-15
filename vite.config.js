@@ -14,13 +14,12 @@ export default defineConfig({
       ),
       context: fileURLToPath(new URL("./src/shared/context", import.meta.url)),
       hooks: fileURLToPath(new URL("./src/shared/hooks", import.meta.url)),
-      layouts: fileURLToPath(new URL("./src/shared/layouts", import.meta.url)),
-      util: fileURLToPath(new URL("./src/shared/util", import.meta.url)),
-      svg: fileURLToPath(
-        new URL("./src/shared/assets/img/svg", import.meta.url)
+      UIElements: fileURLToPath(
+        new URL("./src/shared/UIElements", import.meta.url)
       ),
+      util: fileURLToPath(new URL("./src/shared/util", import.meta.url)),
       icons: fileURLToPath(
-        new URL("./src/shared/assets/img/material-icons", import.meta.url)
+        new URL("./src/shared/UIElements/material-icons", import.meta.url)
       ),
     },
   },

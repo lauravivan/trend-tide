@@ -1,6 +1,6 @@
-import { Button, ButtonWithLink } from "components/Button";
-import CatSvg from "svg/Cat";
+import Cat from "UIElements/Cat";
 import { useAuthContext } from "context/authContext";
+import ButtonLink from "UIElements/ButtonLink";
 
 function Homepage() {
   const { authState } = useAuthContext();
@@ -19,20 +19,19 @@ function Homepage() {
               </h3>
             </div>
             <div className="flex gap-x-2 mt-10">
-              <ButtonWithLink
-                type="button"
+              <ButtonLink
                 text="Get started"
                 className="bg-dark text-white"
                 href={`${
                   authState.isLoggedIn ? "/trend-tide" : "/account/signin"
                 }`}
               />
-              <Button type="button" text="More" className="bg-pastel-purple" />
+              <ButtonLink text="More" className="bg-pastel-purple" />
             </div>
           </div>
         </div>
         <div className="flex flex-1 m-auto lg:absolute lg:-bottom-5 lg:right-0">
-          <CatSvg className="w-52 sm:w-72 lg:w-64 2xl:w-[30rem] transition-width ease-in-out duration-1000" />
+          <Cat className="w-52 sm:w-72 lg:w-64 2xl:w-[30rem] transition-width ease-in-out duration-1000" />
         </div>
       </div>
     </main>

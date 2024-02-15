@@ -1,11 +1,6 @@
-// import { Outlet } from "react-router-dom";
 import { useAuthContext } from "context/authContext";
 import { Navigate, Outlet } from "react-router-dom";
-import CatSvg from "svg/Cat";
-// import useForm from "hooks/useForm";
-// import useInput from "hooks/useInput";
-// import { useLoaderData } from "react-router-dom";
-// import { useState } from "react";
+import Cat from "UIElements/Cat";
 
 function AuthRoot() {
   const { authState } = useAuthContext();
@@ -22,9 +17,7 @@ function AuthRoot() {
             <article>
               <Outlet />
             </article>
-            <div className="absolute -top-16 right-0">
-              <CatSvg className="w-20" />
-            </div>
+            <Cat className="w-20 absolute -top-16 right-0" />
           </section>
         </div>
       </div>

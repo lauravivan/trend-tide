@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-function CatSvg({ className = "" }) {
+function Cat({ className = "" }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -46,4 +46,4 @@ function CatSvg({ className = "" }) {
     </svg>
   );
 }
-export default CatSvg;
+export default Cat;

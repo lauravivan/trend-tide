@@ -8,10 +8,11 @@ import AuthRoot from "@/routes/AuthRoot";
 import SignUp from "@/user/pages/SignUp";
 import SignIn from "@/user/pages/SignIn";
 import RecoverPass from "@/user/pages/RecoverPass";
+import Profile from "@/user/pages/Profile";
 import Root from "@/routes/Root";
-// import Posts from "@/posts/pages/Posts";
-// import CreatePost from "@/posts/pages/CreatePost";
-// import Post from "@/posts/pages/Post";
+import Posts from "@/posts/pages/Posts";
+import CreatePost from "@/posts/pages/CreatePost";
+import Post from "@/posts/pages/Post";
 import AuthProvider from "components/AuthProvider";
 import { StrictMode } from "react";
 
@@ -42,6 +43,24 @@ const router = createRouter([
   {
     path: "/trend-tide",
     element: <Root />,
+    children: [
+      {
+        path: "/trend-tide",
+        element: <Posts />,
+      },
+      {
+        path: "/trend-tide/new-post",
+        element: <CreatePost />,
+      },
+      {
+        path: "/trend-tide/profile",
+        element: <Profile />,
+      },
+      {
+        path: "/trend-tide/view-post/:pid",
+        element: <Post />,
+      },
+    ],
   },
 ]);
 

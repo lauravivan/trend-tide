@@ -1,14 +1,17 @@
 /* eslint-disable react/prop-types */
-import DialogBox from "components/DialogBox";
-import { Button, ButtonWithLink } from "components/Button";
-import Input from "components/Input";
+import DialogBox from "UIElements/DialogBox";
+import FormButton from "UIElements/FormButton";
+import ButtonLink from "UIElements/ButtonLink";
+import Input from "UIElements/Input";
 import useInput from "hooks/useInput";
 import { Link } from "react-router-dom";
 import useForm from "hooks/useForm";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getPasswordText, getUserNameText, getEmailText } from "util/util";
 
 function Auth({
   cardTitle,
-  dialogMsg,
   btnText,
   btnBackHref = "/account/signin",
   hasUserName = false,
@@ -26,14 +29,40 @@ function Auth({
     validatePasswords,
   } = useInput();
 
-  const { formResponse, handleFormRequest } = useForm(
-    method,
-    action,
-    redirectPath
-  );
+  const { formResponse, handleFormRequest } = useForm(method, action);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [formHasBeenSubmitted, setFormHasBeenSubmitted] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const redirect = () => {
+      navigate(redirectPath);
+    };
+
+    if (formResponse.message) {
+      setIsLoading(false);
+    }
+
+    if (formResponse.isFormValid && formResponse.message) {
+      setTimeout(redirect, 1500);
+    }
+
+    if (formHasBeenSubmitted && !formResponse.message) {
+      setIsLoading(true);
+    }
+  }, [
+    formResponse.message,
+    formHasBeenSubmitted,
+    redirectPath,
+    navigate,
+    formResponse.isFormValid,
+  ]);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    setFormHasBeenSubmitted(true);
     const data = {};
     let isFormValid = true;
 
@@ -59,7 +88,26 @@ function Auth({
     <>
       <header className="flex items-center gap-x-4 mb-10">
         <h3 className="text-lg">{cardTitle}</h3>
-        <DialogBox message={dialogMsg} />
+        <DialogBox
+          message={
+            <ul className="leading-7 font-bold">
+              {hasUserName && (
+                <li>
+                  <span className="text-pastel-purple">Username:</span>{" "}
+                  <span className="text-pastel-creme">{getUserNameText()}</span>
+                </li>
+              )}
+              <li>
+                <span className="text-pastel-orange">Email:</span>{" "}
+                <span className="text-pastel-creme">{getEmailText()}</span>
+              </li>
+              <li>
+                <span className="text-pastel-green">Password:</span>{" "}
+                <span className="text-pastel-creme">{getPasswordText()}</span>
+              </li>
+            </ul>
+          }
+        />
       </header>
       <main className="mb-4">
         <form
@@ -79,6 +127,7 @@ function Auth({
                 validateUserName(e.target.value);
               }}
               className={inputResponse.username.state}
+              maxLength={50}
             />
           )}
           <Input
@@ -90,6 +139,7 @@ function Auth({
               validateEmail(e.target.value);
             }}
             className={inputResponse.email.state}
+            maxLength={50}
           />
           <Input
             type="password"
@@ -107,6 +157,7 @@ function Auth({
               }
             }}
             className={inputResponse.pass.state}
+            maxLength={50}
           />
           {hasPassConfirmed && (
             <>
@@ -119,6 +170,7 @@ function Auth({
                   validatePasswords(inputResponse.pass.value, e.target.value);
                 }}
                 className={inputResponse.confirmedPass.state}
+                maxLength={50}
               />
               <small>{inputResponse.confirmedPass.message}</small>
             </>
@@ -147,17 +199,12 @@ function Auth({
             </div>
           )}
           <div className="flex gap-x-4 mt-1">
-            <ButtonWithLink
-              type="button"
+            <ButtonLink
               className="bg-light text-black"
               href={btnBackHref}
               text="Go back"
             />
-            <Button
-              type="submit"
-              className="bg-black text-white"
-              text={btnText}
-            />
+            <FormButton type="submit" text={btnText} isLoading={isLoading} />
           </div>
         </form>
       </main>

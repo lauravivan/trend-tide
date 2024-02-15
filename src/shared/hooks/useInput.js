@@ -28,6 +28,21 @@ const initialState = {
     isValid: false,
     value: null,
   },
+  pickedFile: {
+    state: null,
+    isValid: false,
+    value: null,
+  },
+  input: {
+    state: initialStateVal,
+    isValid: false,
+    value: null,
+  },
+  textarea: {
+    state: initialStateVal,
+    isValid: false,
+    value: null,
+  },
 };
 
 const inputReducer = (state, action) => {
@@ -128,6 +143,84 @@ const inputReducer = (state, action) => {
       };
     }
 
+    case "VALIDATE_FILE": {
+      let pickedFile;
+
+      if (value.target.files || value.target.files.length === 1) {
+        pickedFile = value.target.files[0];
+      } else {
+        return {
+          ...state,
+        };
+      }
+
+      const handlePreviewRequest = () => {
+        return new Promise((resolve, reject) => {
+          if (!pickedFile) {
+            reject(new Error("No file picked"));
+            return;
+          }
+          const fileReader = new FileReader();
+          fileReader.onload = () => {
+            resolve(fileReader.result);
+          };
+          fileReader.onerror = reject;
+          fileReader.readAsDataURL(pickedFile);
+        });
+      };
+
+      return {
+        ...state,
+        pickedFile: {
+          state: "",
+          isValid: true,
+          value: handlePreviewRequest(),
+        },
+      };
+    }
+
+    case "VALIDATE_COMMON_INPUT":
+      if (value.length > 0) {
+        return {
+          ...state,
+          input: {
+            state: valid,
+            isValid: true,
+            value: value,
+          },
+        };
+      }
+
+      return {
+        ...state,
+        input: {
+          state: invalid,
+          isValid: false,
+          value: value,
+        },
+      };
+
+    case "VALIDATE_TEXTAREA":
+      if (value.length > 0) {
+        return {
+          ...state,
+          textarea: {
+            state: valid,
+            isValid: true,
+            value: value,
+          },
+        };
+      }
+
+      return {
+        ...state,
+        textarea: {
+          state: invalid,
+          isValid: false,
+          value: value,
+        },
+      };
+
     default: {
       throw Error("Unknown action: " + action.type);
     }
@@ -168,12 +261,36 @@ function useInput() {
     });
   };
 
+  const validateFile = (file) => {
+    dispatch({
+      type: "VALIDATE_FILE",
+      payload: file,
+    });
+  };
+
+  const validateCommonInput = (input) => {
+    dispatch({
+      type: "VALIDATE_COMMON_INPUT",
+      payload: input,
+    });
+  };
+
+  const validateTextArea = (textarea) => {
+    dispatch({
+      type: "VALIDATE_TEXTAREA",
+      payload: textarea,
+    });
+  };
+
   return {
     inputResponse: state,
     validateEmail,
     validatePassword,
     validateUserName,
     validatePasswords,
+    validateFile,
+    validateCommonInput,
+    validateTextArea,
   };
 }
 

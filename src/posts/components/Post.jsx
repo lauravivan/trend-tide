@@ -1,17 +1,32 @@
+/* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
+import Image from "UIElements/Image";
 
-function Post() {
+function Post({ pid, title, content, imageUrl, author, creationDate }) {
   return (
-    <Link to={"/trend-tide/view-post"}>
-      <article className="bg-light rounded-lg flex flex-col gap-y-3 px-4 py-3 cursor-pointer">
-        <h2 className="text-sm font-bold">That&apos;s my opinion</h2>
-        <span className="text-xs">What the fuck</span>
-        <div className="rounded-lg">
-          <img
-            className="rounded-lg object-cover w-64 h-32"
-            src="https://cdn.pixabay.com/photo/2020/07/20/06/42/english-bulldog-5422018_1280.jpg"
-          />
+    <Link className="w-full" to={"/trend-tide/view-post/" + pid}>
+      <article className="w-full bg-light rounded-lg flex flex-col gap-y-3 px-4 py-3 cursor-pointer overflow-hidden text-dark">
+        <h2 className="text-md font-bold truncate text-wrap w-64">{title}</h2>
+        <p className="text-xs truncate text-wrap w-64">{content}</p>
+        <div className="rounded-lg w-full">
+          {imageUrl && (
+            <img
+              className="rounded-lg object-cover w-full h-32"
+              src={imageUrl}
+            />
+          )}
+          {!imageUrl && (
+            <div className="w-full h-32 bg-gray rounded-lg text-light flex justify-center items-center">
+              <Image fontSize={"40px"} />
+            </div>
+          )}
         </div>
+        <footer className="flex justify-between items-center">
+          <span className="uppercase font-bold">{author}</span>
+          <span className="text-xs font-semibold">
+            {creationDate.substr(0, 10)}
+          </span>
+        </footer>
       </article>
     </Link>
   );

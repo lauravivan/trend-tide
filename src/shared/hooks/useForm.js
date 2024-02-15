@@ -1,27 +1,23 @@
 import { useState } from "react";
-import sendRequest from "util/request";
+import { sendRequest, getApiUrl } from "util/request";
 import { useAuthContext } from "context/authContext";
-import { useNavigate } from "react-router-dom";
 
-const apiUrl = import.meta.env.VITE_BACKEND_URL;
-
-function useForm(method, action, redirectPath) {
+function useForm(method, action, isJSON = true) {
   const { signIn } = useAuthContext();
-  const navigate = useNavigate();
 
   const [res, setRes] = useState({
     message: "",
+    isFormValid: false,
   });
-
-  const redirect = () => {
-    navigate(redirectPath);
-  };
 
   const handleFormRequest = async (isFormValid = false, data = {}) => {
     if (isFormValid) {
       try {
-        const reqRes = await sendRequest(method, apiUrl + action, data, {
-          "Content-Type": "application/json",
+        const reqRes = await sendRequest({
+          method: method,
+          url: getApiUrl() + action,
+          resource: data,
+          isJSON: isJSON,
         });
 
         if (reqRes.ok) {
@@ -33,9 +29,8 @@ function useForm(method, action, redirectPath) {
 
           setRes({
             message: success.message,
+            isFormValid: true,
           });
-
-          setTimeout(redirect, 1500);
         } else {
           const fail = await reqRes.json();
 
