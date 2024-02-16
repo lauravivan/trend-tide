@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import useForm from "hooks/useForm";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getPasswordText, getUserNameText, getEmailText } from "util/util";
 
 function Auth({
   cardTitle,
@@ -29,7 +28,7 @@ function Auth({
     validatePasswords,
   } = useInput();
 
-  const { formResponse, handleFormRequest } = useForm(method, action);
+  const { formResponse, handleFormRequest } = useForm();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formHasBeenSubmitted, setFormHasBeenSubmitted] = useState(false);
@@ -81,7 +80,7 @@ function Auth({
       isFormValid = false;
     }
 
-    handleFormRequest(isFormValid, data);
+    handleFormRequest(method, action, true, isFormValid, data);
   };
 
   return (
@@ -94,16 +93,26 @@ function Auth({
               {hasUserName && (
                 <li>
                   <span className="text-pastel-purple">Username:</span>{" "}
-                  <span className="text-pastel-creme">{getUserNameText()}</span>
+                  <span className="text-pastel-creme">
+                    Can contain symbols (%,$,#,*), digits and letters, having
+                    between 5 and 15 characters, with at least 3 non-capital
+                    letters
+                  </span>
                 </li>
               )}
               <li>
                 <span className="text-pastel-orange">Email:</span>{" "}
-                <span className="text-pastel-creme">{getEmailText()}</span>
+                <span className="text-pastel-creme">
+                  Must contain @ and at least one .
+                </span>
               </li>
               <li>
                 <span className="text-pastel-green">Password:</span>{" "}
-                <span className="text-pastel-creme">{getPasswordText()}</span>
+                <span className="text-pastel-creme">
+                  Must contain between 9 and 40 characteres having at least one
+                  symbol, one capital letter, one digit and one non-capital
+                  letter
+                </span>
               </li>
             </ul>
           }
@@ -204,7 +213,12 @@ function Auth({
               href={btnBackHref}
               text="Go back"
             />
-            <FormButton type="submit" text={btnText} isLoading={isLoading} />
+            <FormButton
+              type="submit"
+              text={btnText}
+              isLoading={isLoading}
+              className="w-full"
+            />
           </div>
         </form>
       </main>

@@ -1,48 +1,34 @@
 import Post from "@/posts/components/Post";
-import { sendRequest, getApiUrl } from "util/request";
 import { useEffect, useState } from "react";
-import Spinner from "UIElements/Spinner";
 import ListItems from "components/ListItems";
+import { sendRequest, getApiUrl } from "util/request";
+import RequestMessage from "components/RequestMessage";
 
 function Posts() {
-  const [requestHasBeenMade, setRequestHasBeenMade] = useState(false);
-  const [posts, setPosts] = useState(null);
+  const [requestRes, setRequestRes] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      setRequestHasBeenMade(true);
-      let data = await sendRequest({ url: getApiUrl() + "post/posts" });
+      try {
+        const res = await sendRequest({
+          url: getApiUrl() + "post/posts",
+        });
 
-      if (data) {
-        data = await data.json();
-        setPosts(data);
+        setRequestRes(res);
+      } catch (error) {
+        console.log(error);
       }
     };
 
     fetchData();
   }, []);
 
-  if (!requestHasBeenMade) {
-    return (
-      <div className="text-lg text-white flex m-auto gap-x-4">
-        <span>Looking for posts</span>
-        <Spinner />
-      </div>
-    );
-  }
-
-  if (requestHasBeenMade && posts) {
-    if (posts.length === 0) {
-      return (
-        <div className="text-lg text-white m-auto">
-          <span>No posts have been found </span>
-        </div>
-      );
-    } else {
+  if (requestRes) {
+    if (requestRes.status === "success") {
       return (
         <div className="text-white px-6 py-7 w-full h-full overflow-y-auto overflow-x-hidden">
           <ListItems
-            items={posts.map((post) => (
+            items={requestRes.data.map((post) => (
               <div key={post._id}>
                 <Post
                   author={post.author.username}
@@ -57,7 +43,11 @@ function Posts() {
           />
         </div>
       );
+    } else {
+      return <RequestMessage message={requestRes.message} />;
     }
+  } else {
+    return <RequestMessage isSearching={true} />;
   }
 }
 

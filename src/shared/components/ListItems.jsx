@@ -23,7 +23,10 @@ const ListItems = ({ items = [], maxLength = 10 }) => {
 
   return (
     <div className="w-full h-full flex flex-col content-between">
-      <header className="w-full flex justify-end mb-4">
+      <header className="w-full flex justify-between items-center mb-4">
+        <div>
+          <span>{pageCounter + " of " + items.length}</span>
+        </div>
         <div className={`flex items-center`}>
           <button
             className="border-e flex items-center pr-3"
@@ -84,7 +87,7 @@ const ListItems = ({ items = [], maxLength = 10 }) => {
             </button>
           </div>
         )}
-        {pageCounter >= items.length && (
+        {pageCounter > maxLength && pageCounter >= items.length && (
           <div className="text-center mt-5 mb-10">
             <button
               className="text-light font-bold"

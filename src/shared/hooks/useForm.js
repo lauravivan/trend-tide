@@ -2,49 +2,50 @@ import { useState } from "react";
 import { sendRequest, getApiUrl } from "util/request";
 import { useAuthContext } from "context/authContext";
 
-function useForm(method, action, isJSON = true) {
+function useForm() {
   const { signIn } = useAuthContext();
-
   const [res, setRes] = useState({
     message: "",
     isFormValid: false,
   });
 
-  const handleFormRequest = async (isFormValid = false, data = {}) => {
+  const handleFormRequest = async (
+    method,
+    action,
+    isJSON = true,
+    isFormValid = false,
+    data = {}
+  ) => {
     if (isFormValid) {
       try {
-        const reqRes = await sendRequest({
+        const res = await sendRequest({
           method: method,
           url: getApiUrl() + action,
-          resource: data,
           isJSON: isJSON,
+          resource: data,
         });
 
-        if (reqRes.ok) {
-          const success = await reqRes.json();
-
-          if (success.token) {
-            signIn(success.token, success.uid);
+        if (res.status === "success") {
+          if (res.token) {
+            signIn(res.token, res.uid);
           }
 
           setRes({
-            message: success.message,
             isFormValid: true,
+            message: res.message,
           });
-        } else {
-          const fail = await reqRes.json();
-
+        } else if (res.status === "failed") {
           setRes({
-            message: fail.message,
+            isFormValid: false,
+            message: res.message,
           });
         }
-      } catch (err) {
-        setRes({
-          message: err.message,
-        });
+      } catch (error) {
+        console.log(error);
       }
     } else {
       setRes({
+        isFormValid: false,
         message: "Please fill in the data correctly",
       });
     }

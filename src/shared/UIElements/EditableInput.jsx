@@ -1,13 +1,20 @@
 /* eslint-disable react/prop-types */
 import FormButton from "UIElements/FormButton";
-import Input from "UIElements/Input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useInput from "hooks/useInput";
+import useForm from "hooks/useForm";
 
 const EditableInput = ({ inputName, inputValue, inputType, formAction }) => {
   const { inputResponse, validateUserName, validateEmail, validatePassword } =
     useInput();
   const [editMode, setEditMode] = useState(false);
+  const { formResponse, handleFormRequest } = useForm();
+
+  useEffect(() => {
+    if (formResponse.isFormValid) {
+      setEditMode(false);
+    }
+  }, [formResponse.isFormValid]);
 
   const edit = () => {
     setEditMode(true);
@@ -17,8 +24,17 @@ const EditableInput = ({ inputName, inputValue, inputType, formAction }) => {
     setEditMode(false);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
+    const input = e.target[0];
+    const inputName = input.name;
+    const inputValue = input.value;
+
+    if (input.className.includes("true")) {
+      await handleFormRequest("PATCH", formAction, true, true, {
+        [inputName]: inputValue,
+      });
+    }
   };
 
   return (
@@ -28,23 +44,18 @@ const EditableInput = ({ inputName, inputValue, inputType, formAction }) => {
           handleFormSubmit(e);
         }}
       >
-        {!editMode && (
-          <button type="button" onClick={edit} className="flex flex-col">
-            <small className="uppercase">{inputName}</small>
-            {inputType === "password" ? ".............." : inputValue}
-          </button>
-        )}
-        {editMode && (
-          <>
-            <Input
+        <div className="flex flex-col cursor-pointer">
+          <small className="uppercase">{inputName}</small>
+          <div className="flex">
+            <input
               type={inputType}
-              className={`text-dark ${
+              className={`text-sm bg-dark outline-none flex-1 ${
                 inputName === "username"
-                  ? inputResponse.username.state
+                  ? inputResponse.username.isValid
                   : inputName === "email"
-                  ? inputResponse.email.state
+                  ? inputResponse.email.isValid
                   : inputName === "password"
-                  ? inputResponse.pass.state
+                  ? inputResponse.pass.isValid
                   : ""
               }`}
               placeholder={
@@ -61,19 +72,23 @@ const EditableInput = ({ inputName, inputValue, inputType, formAction }) => {
                   validatePassword(e.target.value);
                 }
               }}
+              onClick={edit}
+              autoComplete="off"
             />
-            <div className="flex justify-end gap-x-4 mt-3">
-              <button
-                type="button"
-                className="bg-light text-dark font-semibold w-1/5 rounded flex items-center justify-center py-3 hover:opacity-85 text-xs"
-                onClick={quitEditting}
-              >
-                Quit
-              </button>
-              <FormButton className="w-1/5 text-xs" text="Save" />
-            </div>
-          </>
-        )}
+            {editMode && (
+              <div className="flex gap-x-4 flex-1">
+                <button
+                  type="button"
+                  className="bg-light w-full text-dark font-semibold rounded flex items-center justify-center hover:opacity-85 text-xs"
+                  onClick={quitEditting}
+                >
+                  Quit
+                </button>
+                <FormButton className="w-full text-xs" text="Save" />
+              </div>
+            )}
+          </div>
+        </div>
       </form>
     </div>
   );

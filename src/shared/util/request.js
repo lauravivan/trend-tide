@@ -10,24 +10,63 @@ const sendRequest = async ({
   resource = "",
   isJSON = true,
 }) => {
-  if (method === "GET") {
-    return await fetch(url);
-  }
+  let response;
 
-  if (!isJSON) {
-    return await fetch(url, {
-      method: method,
-      body: resource,
-    });
-  }
+  try {
+    if (method === "GET") {
+      response = await fetch(url);
 
-  return await fetch(url, {
-    method: method,
-    body: JSON.stringify(resource),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+      if (response.ok) {
+        const res = await response.json();
+
+        return {
+          status: "success",
+          data: res,
+          message: "",
+        };
+      } else {
+        return {
+          status: "failed",
+          message: response.statusText,
+        };
+      }
+    } else {
+      if (!isJSON) {
+        response = await fetch(url, {
+          method: method,
+          body: resource,
+        });
+      } else {
+        response = await fetch(url, {
+          method: method,
+          body: JSON.stringify(resource),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+
+      if (response.ok) {
+        const res = await response.json();
+
+        return {
+          status: "success",
+          message: res.message,
+          token: res.token ? res.token : "",
+          uid: res.uid ? res.uid : "",
+        };
+      } else {
+        const res = await response.json();
+
+        return {
+          status: "failed",
+          message: res.message,
+        };
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const getApiUrl = () => {

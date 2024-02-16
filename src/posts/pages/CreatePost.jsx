@@ -5,15 +5,23 @@ import useInput from "hooks/useInput";
 import useForm from "hooks/useForm";
 import { getCredentials } from "util/store";
 import { UploadIcon } from "icons/Icon";
+import Modal from "UIElements/Modal";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function CreatePost() {
   const { inputResponse, validateFile, validateCommonInput, validateTextArea } =
     useInput();
-  const { formResponse, handleFormRequest } = useForm(
-    "POST",
-    "post/new-post",
-    false
-  );
+  const { formResponse, handleFormRequest } = useForm();
+  const navigate = useNavigate();
+
+  const redirect = () => {
+    navigate("/trend-tide");
+  };
+
+  if (formResponse.isFormValid) {
+    setTimeout(redirect, 3000);
+  }
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -29,7 +37,7 @@ function CreatePost() {
           formData.append("creationDate", currentDate);
           formData.append("image", result);
 
-          handleFormRequest(true, formData);
+          handleFormRequest("POST", "post/new-post", false, true, formData);
         }
       });
     } else {
@@ -39,13 +47,13 @@ function CreatePost() {
         formData.append("author", getCredentials().uid);
         formData.append("creationDate", currentDate);
 
-        handleFormRequest(true, formData);
+        handleFormRequest("POST", "post/new-post", false, true, formData);
       }
     }
   };
 
   return (
-    <div className="w-full h-full p-5">
+    <div className="w-full h-full p-5 relative">
       <form
         className="flex h-full"
         onSubmit={(e) => {
@@ -79,7 +87,6 @@ function CreatePost() {
                 name="postContent"
                 id="postContent"
               ></textarea>
-              {formResponse.message && <div>{formResponse.message}</div>}
               <div
                 className={`m-3 bg-gray rounded text-center py-6 cursor-pointer hover:opacity-90`}
               >
@@ -98,6 +105,7 @@ function CreatePost() {
           <FormButton text="Post" />
         </div>
       </form>
+      {formResponse.message && <Modal content={formResponse.message} />}
     </div>
   );
 }
