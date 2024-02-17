@@ -44,6 +44,7 @@ function Posts() {
                     pid={post._id}
                     checkFavorite={true}
                     isFavorite={true}
+                    qntOfLikes={post.usersWhoLiked.length}
                   />
                 </div>
               );
@@ -59,6 +60,7 @@ function Posts() {
                     pid={post._id}
                     checkFavorite={true}
                     isFavorite={false}
+                    qntOfLikes={post.usersWhoLiked.length}
                   />
                 </div>
               );

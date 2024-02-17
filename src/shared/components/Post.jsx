@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Image from "UIElements/Image";
 import Heart from "UIElements/Heart";
 import HeartFavorite from "UIElements/HeartFavorite";
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { sendRequest, getApiUrl } from "util/request";
 import { getCredentials } from "util/store";
 
@@ -16,8 +16,16 @@ function Post({
   creationDate,
   checkFavorite = false,
   isFavorite = false,
+  qntOfLikes = "",
 }) {
   const [isFavorited, setIsFavorited] = useState(isFavorite);
+  const [updateQntOfLikes, setUpdateQntOfLikes] = useState(qntOfLikes);
+
+  useEffect(() => {
+    if (qntOfLikes !== updateQntOfLikes) {
+      setUpdateQntOfLikes(qntOfLikes);
+    }
+  }, [qntOfLikes, updateQntOfLikes]);
 
   const handleBtnClick = () => {
     setIsFavorited(!isFavorited);
@@ -94,8 +102,13 @@ function Post({
                 }}
               >
                 <span>
-                  {!isFavorited && <Heart />}
-                  {isFavorited && <HeartFavorite className="text-red" />}
+                  <span className="relative">
+                    <span className="absolute text-dark bottom-2 -right-3">
+                      {updateQntOfLikes}
+                    </span>
+                    {!isFavorited && <Heart />}
+                    {isFavorited && <HeartFavorite className="text-red" />}
+                  </span>
                 </span>
               </button>
             </form>

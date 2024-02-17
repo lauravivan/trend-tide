@@ -46,6 +46,7 @@ const UserPosts = () => {
                 imageUrl={post.image}
                 creationDate={post.creationDate}
                 pid={post._id}
+                qntOfLikes={post.usersWhoLiked.length}
               />
             </div>
           ))}

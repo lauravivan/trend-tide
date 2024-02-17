@@ -39,6 +39,7 @@ function FavoritePosts() {
                 pid={post._id}
                 checkFavorite={true}
                 isFavorite={true}
+                qntOfLikes={post.usersWhoLiked.length}
               />
             </div>
           ))}
