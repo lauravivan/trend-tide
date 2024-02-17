@@ -11,7 +11,7 @@ import useForm from "hooks/useForm";
 const Profile = () => {
   const { inputResponse, validateFile } = useInput();
   const [requestRes, setRequestRes] = useState(null);
-  const { formResponse, handleFormRequest } = useForm();
+  const { handleFormRequest } = useForm();
 
   useEffect(() => {
     const fetchData = async () => {

@@ -10,6 +10,7 @@ import { useAuthContext } from "context/authContext";
 import { Navigate } from "react-router-dom";
 import Input from "UIElements/Input";
 import Search from "UIElements/Search";
+import { getCredentials } from "util/store";
 
 function AsideItem({ children }) {
   return (
@@ -39,12 +40,14 @@ function Root() {
                   </Link>
                 </AsideItem>
                 <AsideItem>
-                  <Link>
+                  <Link
+                    to={"/trend-tide/favorite-posts/" + getCredentials().uid}
+                  >
                     <FavoriteIcon fontSize="30px" />
                   </Link>
                 </AsideItem>
                 <AsideItem>
-                  <Link>
+                  <Link to={"/trend-tide/posts/" + getCredentials().uid}>
                     <PersonalPostsIcon fontSize="30px" />
                   </Link>
                 </AsideItem>

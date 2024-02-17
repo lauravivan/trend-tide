@@ -1,4 +1,4 @@
-import Post from "@/posts/components/Post";
+import Post from "components/Post";
 import { useEffect, useState } from "react";
 import ListItems from "components/ListItems";
 import { sendRequest, getApiUrl } from "util/request";
@@ -26,22 +26,45 @@ function Posts() {
   if (requestRes) {
     if (requestRes.status === "success") {
       return (
-        <div className="text-white px-6 py-7 w-full h-full overflow-y-auto overflow-x-hidden">
-          <ListItems
-            items={requestRes.data.map((post) => (
-              <div key={post._id}>
-                <Post
-                  author={post.author.username}
-                  title={post.title}
-                  content={post.content}
-                  imageUrl={post.image}
-                  creationDate={post.creationDate}
-                  pid={post._id}
-                />
-              </div>
-            ))}
-          />
-        </div>
+        <ListItems
+          items={requestRes.data.map((post) => {
+            const isFavorite = post.author.favoritePosts.find(
+              (favPost) => favPost._id === post._id
+            );
+
+            if (isFavorite) {
+              return (
+                <div key={post._id}>
+                  <Post
+                    author={post.author.username}
+                    title={post.title}
+                    content={post.content}
+                    imageUrl={post.image}
+                    creationDate={post.creationDate}
+                    pid={post._id}
+                    checkFavorite={true}
+                    isFavorite={true}
+                  />
+                </div>
+              );
+            } else {
+              return (
+                <div key={post._id}>
+                  <Post
+                    author={post.author.username}
+                    title={post.title}
+                    content={post.content}
+                    imageUrl={post.image}
+                    creationDate={post.creationDate}
+                    pid={post._id}
+                    checkFavorite={true}
+                    isFavorite={false}
+                  />
+                </div>
+              );
+            }
+          })}
+        />
       );
     } else {
       return <RequestMessage message={requestRes.message} />;

@@ -2,6 +2,7 @@ import {
   createBrowserRouter as createRouter,
   RouterProvider,
 } from "react-router-dom";
+import { Suspense } from "react";
 import Homepage from "@/pages/Homepage";
 import NotFound from "@/pages/404";
 import AuthRoot from "@/routes/AuthRoot";
@@ -9,6 +10,8 @@ import SignUp from "@/user/pages/SignUp";
 import SignIn from "@/user/pages/SignIn";
 import RecoverPass from "@/user/pages/RecoverPass";
 import Profile from "@/user/pages/Profile";
+import UserPosts from "@/user/pages/UserPosts";
+import FavoritePosts from "@/user/pages/FavoritePosts";
 import Root from "@/routes/Root";
 import Posts from "@/posts/pages/Posts";
 import CreatePost from "@/posts/pages/CreatePost";
@@ -59,6 +62,14 @@ const router = createRouter([
       {
         path: "/trend-tide/view-post/:pid",
         element: <Post />,
+      },
+      {
+        path: "/trend-tide/posts/:uid",
+        element: <UserPosts />,
+      },
+      {
+        path: "/trend-tide/favorite-posts/:uid",
+        element: <FavoritePosts />,
       },
     ],
   },

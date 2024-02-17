@@ -1,18 +1,19 @@
-import Post from "components/Post";
-import { useEffect, useState } from "react";
-import ListItems from "components/ListItems";
+//No posts have been published yet! Publish your first post by going on *Create new Post*
+
 import { sendRequest, getApiUrl } from "util/request";
-import RequestMessage from "components/RequestMessage";
+import { useEffect, useState } from "react";
 import { getCredentials } from "util/store";
+import ListItems from "components/ListItems";
+import RequestMessage from "components/RequestMessage";
+import Post from "components/Post";
 
-function FavoritePosts() {
+const UserPosts = () => {
   const [requestRes, setRequestRes] = useState(null);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await sendRequest({
-          url: getApiUrl() + "user/favorite-posts/" + getCredentials().uid,
+          url: getApiUrl() + "user/posts/" + getCredentials().uid,
         });
 
         setRequestRes(res);
@@ -25,10 +26,18 @@ function FavoritePosts() {
   }, []);
 
   if (requestRes) {
+    {
+      requestRes.data.posts.map((item, index) => {
+        console.log(item, index);
+      });
+    }
+  }
+
+  if (requestRes) {
     if (requestRes.status === "success") {
       return (
         <ListItems
-          items={requestRes.data.favoritePosts.map((post) => (
+          items={requestRes.data.posts.map((post) => (
             <div key={post._id}>
               <Post
                 author={post.author.username}
@@ -37,8 +46,6 @@ function FavoritePosts() {
                 imageUrl={post.image}
                 creationDate={post.creationDate}
                 pid={post._id}
-                checkFavorite={true}
-                isFavorite={true}
               />
             </div>
           ))}
@@ -50,6 +57,6 @@ function FavoritePosts() {
   } else {
     return <RequestMessage isSearching={true} />;
   }
-}
+};
 
-export default FavoritePosts;
+export default UserPosts;

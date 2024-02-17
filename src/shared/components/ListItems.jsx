@@ -1,16 +1,22 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ListItems = ({ items = [], maxLength = 10 }) => {
   const [pageCounter, setPageCounter] = useState(maxLength);
   const [view, setView] = useState("grid");
+  const [itemsPerView, setItemsPerView] = useState(0);
+
+  useEffect(() => {
+    const itemsTotal = pageCounter - (pageCounter - items.length);
+    setItemsPerView(itemsTotal);
+  }, [pageCounter, items.length]);
 
   const getMoreItems = () => {
-    setPageCounter(pageCounter + (items.length - maxLength));
+    setPageCounter(pageCounter - (items.length - maxLength));
   };
 
   const getLessItems = () => {
-    setPageCounter(pageCounter - (pageCounter - maxLength));
+    setPageCounter(pageCounter + (pageCounter - maxLength));
   };
 
   const changeToGrid = () => {
@@ -22,83 +28,85 @@ const ListItems = ({ items = [], maxLength = 10 }) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col content-between">
-      <header className="w-full flex justify-between items-center mb-4">
-        <div>
-          <span>{pageCounter + " of " + items.length}</span>
-        </div>
-        <div className={`flex items-center`}>
-          <button
-            className="border-e flex items-center pr-3"
-            type="button"
-            onClick={changeToGrid}
-          >
-            <span
-              className="material-icons-outlined p-2 hover:bg-black hover:rounded"
-              style={{ fontSize: "30px" }}
-              title="Grid"
-            >
-              apps
-            </span>
-          </button>
-          <button
-            className="flex items-center justify-start pl-3"
-            type="button"
-            onClick={changeToList}
-          >
-            <span
-              className="material-icons-outlined p-2 hover:bg-black hover:rounded"
-              style={{ fontSize: "30px" }}
-              title="List"
-            >
-              list
-            </span>
-          </button>
-        </div>
-      </header>
-
-      <main className="w-full">
-        <div
-          className={`gap-10 ${
-            view === "grid" ? "flex flex-wrap w-full" : "flex flex-col w-full"
-          }`}
-        >
-          {items.map((item, index) => {
-            if (index < pageCounter) {
-              return (
-                <div className="w-full flex-1" key={index}>
-                  {item}
-                </div>
-              );
-            }
-          })}
-        </div>
-      </main>
-
-      <footer className="mt-10">
-        {pageCounter < items.length && (
-          <div className="text-center mt-5 mb-10">
+    <div className="text-white px-6 py-7 w-full h-full overflow-y-auto overflow-x-hidden">
+      <div className="w-full h-full flex flex-col content-between">
+        <header className="w-full flex justify-between items-center mb-4">
+          <div>
+            <span>{itemsPerView + " of " + items.length}</span>
+          </div>
+          <div className={`flex items-center`}>
             <button
-              className="text-light font-bold"
+              className="border-e flex items-center pr-3"
               type="button"
-              onClick={getMoreItems}
+              onClick={changeToGrid}
             >
-              See more...
+              <span
+                className="material-icons-outlined p-2 hover:bg-black hover:rounded"
+                style={{ fontSize: "30px" }}
+                title="Grid"
+              >
+                apps
+              </span>
+            </button>
+            <button
+              className="flex items-center justify-start pl-3"
+              type="button"
+              onClick={changeToList}
+            >
+              <span
+                className="material-icons-outlined p-2 hover:bg-black hover:rounded"
+                style={{ fontSize: "30px" }}
+                title="List"
+              >
+                list
+              </span>
             </button>
           </div>
-        )}
-        {pageCounter > maxLength && pageCounter >= items.length && (
-          <div className="text-center mt-5 mb-10">
-            <button
-              className="text-light font-bold"
-              type="button"
-              onClick={getLessItems}
-            >
-              See less...
-            </button>
+        </header>
+
+        <main className="w-full">
+          <div
+            className={`gap-10 ${
+              view === "grid" ? "flex flex-wrap w-full" : "flex flex-col w-full"
+            }`}
+          >
+            {items.map((item, index) => {
+              if (index < pageCounter) {
+                return (
+                  <div className="w-full flex-1" key={index}>
+                    {item}
+                  </div>
+                );
+              }
+            })}
           </div>
-        )}
-      </footer>
+        </main>
+
+        <footer className="mt-10">
+          {pageCounter < items.length && (
+            <div className="text-center mt-5 mb-10">
+              <button
+                className="text-light font-bold"
+                type="button"
+                onClick={getMoreItems}
+              >
+                See more...
+              </button>
+            </div>
+          )}
+          {pageCounter > maxLength && pageCounter >= items.length && (
+            <div className="text-center mt-5 mb-10">
+              <button
+                className="text-light font-bold"
+                type="button"
+                onClick={getLessItems}
+              >
+                See less...
+              </button>
+            </div>
+          )}
+        </footer>
+      </div>
     </div>
   );
 };
