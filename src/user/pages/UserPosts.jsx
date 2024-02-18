@@ -38,7 +38,7 @@ const UserPosts = () => {
       return (
         <ListItems
           items={requestRes.data.posts.map((post) => (
-            <div key={post._id}>
+            <div className="w-full flex flex-1" key={post._id}>
               <Post
                 author={post.author.username}
                 title={post.title}
