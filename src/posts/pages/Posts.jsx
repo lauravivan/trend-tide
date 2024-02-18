@@ -34,7 +34,7 @@ function Posts() {
 
             if (isFavorite) {
               return (
-                <div key={post._id}>
+                <div className="w-full flex flex-1" key={post._id}>
                   <Post
                     author={post.author.username}
                     title={post.title}
@@ -50,7 +50,7 @@ function Posts() {
               );
             } else {
               return (
-                <div key={post._id}>
+                <div className="w-full flex flex-1" key={post._id}>
                   <Post
                     author={post.author.username}
                     title={post.title}

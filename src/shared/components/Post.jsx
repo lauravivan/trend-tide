@@ -70,8 +70,8 @@ function Post({
   };
 
   return (
-    <Link className="w-full" to={"/trend-tide/view-post/" + pid}>
-      <article className="w-full bg-light rounded-lg flex flex-col gap-y-3 px-4 py-3 cursor-pointer overflow-hidden text-dark">
+    <Link className="w-full flex flex-1" to={"/trend-tide/view-post/" + pid}>
+      <article className="w-full bg-light rounded-lg flex flex-1 flex-col gap-y-3 px-4 py-3 cursor-pointer overflow-hidden text-dark">
         <h2 className="text-md font-bold truncate text-wrap w-64">{title}</h2>
         <p className="text-xs truncate text-wrap w-64">{content}</p>
         <div className="rounded-lg w-full">
@@ -87,7 +87,7 @@ function Post({
             </div>
           )}
         </div>
-        <footer className="flex justify-between items-center">
+        <footer className="flex justify-between items-center mt-auto">
           {checkFavorite && (
             <form
               onSubmit={(e) => {

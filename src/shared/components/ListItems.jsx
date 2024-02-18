@@ -64,16 +64,16 @@ const ListItems = ({ items = [], maxLength = 10 }) => {
           </div>
         </header>
 
-        <main className="w-full">
+        <main className="w-full flex">
           <div
-            className={`gap-10 ${
-              view === "grid" ? "flex flex-wrap w-full" : "flex flex-col w-full"
+            className={`flex flex-1 gap-10 w-full ${
+              view === "grid" ? "flex-wrap" : "flex-col"
             }`}
           >
             {items.map((item, index) => {
               if (index < pageCounter) {
                 return (
-                  <div className="w-full flex-1" key={index}>
+                  <div className="w-full flex flex-1" key={index}>
                     {item}
                   </div>
                 );
