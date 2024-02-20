@@ -25,9 +25,12 @@ const sendRequest = async ({
           message: "",
         };
       } else {
+        const res = await response.json();
+
         return {
           status: "failed",
-          message: response.statusText,
+          data: [],
+          message: res.message,
         };
       }
     } else {

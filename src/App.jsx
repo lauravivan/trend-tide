@@ -10,12 +10,12 @@ import SignUp from "@/user/pages/SignUp";
 import SignIn from "@/user/pages/SignIn";
 import RecoverPass from "@/user/pages/RecoverPass";
 import Profile from "@/user/pages/Profile";
-import UserPosts from "@/user/pages/UserPosts";
-import FavoritePosts from "@/user/pages/FavoritePosts";
 import Root from "@/routes/Root";
 import Posts from "@/posts/pages/Posts";
 import CreatePost from "@/posts/pages/CreatePost";
 import Post from "@/posts/pages/Post";
+import UserPosts from "@/posts/pages/UserPosts";
+import FavoritePosts from "@/posts/pages/FavoritePosts";
 import AuthProvider from "components/AuthProvider";
 import { StrictMode } from "react";
 

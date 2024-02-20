@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useRef, useState, useEffect } from "react";
 import Spinner from "UIElements/Spinner";
-import Image from "UIElements/Image";
+import ImageNotFound from "UIElements/ImageNotFound";
 
 const FilePicker = ({
   onChange,
@@ -52,7 +52,7 @@ const FilePicker = ({
                 </div>
               </>
             )}
-            {!previewUrl && <Image />}
+            {!previewUrl && <ImageNotFound />}
           </div>
         )}
         {!previewUrl && (

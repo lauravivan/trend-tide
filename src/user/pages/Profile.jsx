@@ -5,7 +5,6 @@ import FormButton from "UIElements/FormButton";
 import EditableInput from "UIElements/EditableInput";
 import { useEffect, useState } from "react";
 import { sendRequest, getApiUrl } from "util/request";
-import RequestMessage from "components/RequestMessage";
 import useForm from "hooks/useForm";
 
 const Profile = () => {
@@ -123,10 +122,10 @@ const Profile = () => {
         </div>
       );
     } else {
-      return <RequestMessage message={requestRes.message} />;
+      // return <RequestMessage message={requestRes.message} />;
     }
   } else {
-    return <RequestMessage isSearching={true} />;
+    // return <RequestMessage isSearching={true} />;
   }
 };
 

@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
-import Image from "UIElements/Image";
+import ImageNotFound from "UIElements/ImageNotFound";
 import Heart from "UIElements/Heart";
 import HeartFavorite from "UIElements/HeartFavorite";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { sendRequest, getApiUrl } from "util/request";
 import { getCredentials } from "util/store";
 
@@ -70,21 +70,22 @@ function Post({
   };
 
   return (
-    <Link className="w-full flex flex-1" to={"/trend-tide/view-post/" + pid}>
-      <article className="w-full bg-light rounded-lg flex flex-1 flex-col gap-y-3 px-4 py-3 cursor-pointer overflow-hidden text-dark">
-        <h2 className="text-md font-bold truncate text-wrap w-64">{title}</h2>
-        <p className="text-xs truncate text-wrap w-64">{content}</p>
+    <Link className="w-full" to={"/trend-tide/view-post/" + pid}>
+      <article className="w-full bg-light rounded-lg flex flex-col gap-y-3 px-4 py-3 cursor-pointer text-dark">
+        <h2 className="text-md font-bold truncate overflow-hidden">{title}</h2>
+        <p className="text-xs truncate overflow-hidden">{content}</p>
         <div className="rounded-lg w-full">
           {imageUrl && (
             <img
-              className="rounded-lg object-cover w-full h-32"
+              className="rounded-lg object-cover w-full h-40"
               src={imageUrl}
             />
           )}
           {!imageUrl && (
-            <div className="w-full h-32 bg-gray rounded-lg text-light flex justify-center items-center">
-              <Image fontSize={"40px"} />
-            </div>
+            <ImageNotFound
+              className="w-full h-40 bg-gray rounded-lg text-light flex justify-center items-center"
+              fontSize={"40px"}
+            />
           )}
         </div>
         <footer className="flex justify-between items-center mt-auto">

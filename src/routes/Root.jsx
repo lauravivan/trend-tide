@@ -67,7 +67,7 @@ function Root() {
               </ul>
             </nav>
           </aside>
-          <main className="flex flex-col h-full w-full">
+          <div className="flex flex-col h-full w-full">
             <header className="bg-dark text-white md:rounded-tr-lg px-4 py-1">
               <nav className="px-3 py-4">
                 <ul className="flex flex-col gap-y-3 md:gap-y-0 sm:flex-row sm:justify-between sm:items-center">
@@ -93,8 +93,10 @@ function Root() {
                 </ul>
               </nav>
             </header>
-            <Outlet />
-          </main>
+            <main className="text-light h-full w-full p-10 overflow-y-auto overflow-x-hidden">
+              <Outlet />
+            </main>
+          </div>
         </div>
       </div>
     </div>

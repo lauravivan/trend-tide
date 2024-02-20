@@ -6,7 +6,6 @@ import useForm from "hooks/useForm";
 import { getCredentials } from "util/store";
 import { UploadIcon } from "icons/Icon";
 import Modal from "UIElements/Modal";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function CreatePost() {
