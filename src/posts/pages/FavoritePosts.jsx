@@ -3,7 +3,7 @@ import { getCredentials } from "util/store";
 
 function FavoritePosts() {
   return (
-    <ListPosts actionPath={"post/favorite-posts/" + getCredentials().uid} />
+    <ListPosts actionPath={"user/favorite-posts/" + getCredentials().uid} />
   );
 }
 

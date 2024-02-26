@@ -93,7 +93,7 @@ function Root() {
                 </ul>
               </nav>
             </header>
-            <main className="text-light h-full w-full p-10 overflow-y-auto overflow-x-hidden">
+            <main className="text-light h-full w-full md:p-10 overflow-y-auto overflow-x-hidden">
               <Outlet />
             </main>
           </div>

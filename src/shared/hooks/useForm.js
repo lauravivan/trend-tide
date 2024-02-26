@@ -9,45 +9,37 @@ function useForm() {
     isFormValid: false,
   });
 
-  const handleFormRequest = async (
-    method,
-    action,
+  const handleFormRequest = async ({
+    method = "",
+    action = "",
     isJSON = true,
-    isFormValid = false,
-    data = {}
-  ) => {
-    if (isFormValid) {
-      try {
-        const res = await sendRequest({
-          method: method,
-          url: getApiUrl() + action,
-          isJSON: isJSON,
-          resource: data,
-        });
-
-        if (res.status === "success") {
-          if (res.token) {
-            signIn(res.token, res.uid);
-          }
-
-          setRes({
-            isFormValid: true,
-            message: res.message,
-          });
-        } else if (res.status === "failed") {
-          setRes({
-            isFormValid: false,
-            message: res.message,
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      setRes({
-        isFormValid: false,
-        message: "Please fill in the data correctly",
+    data = {},
+  }) => {
+    try {
+      const res = await sendRequest({
+        method: method,
+        url: getApiUrl() + action,
+        isJSON: isJSON,
+        resource: data,
       });
+
+      if (res.status === "success") {
+        if (res.token) {
+          signIn(res.token, res.uid);
+        }
+
+        setRes({
+          isFormValid: true,
+          message: res.message,
+        });
+      } else if (res.status === "failed") {
+        setRes({
+          isFormValid: false,
+          message: res.message,
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 

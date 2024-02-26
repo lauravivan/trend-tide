@@ -1,41 +1,81 @@
 /* eslint-disable react/prop-types */
 import FormButton from "UIElements/FormButton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useInput from "hooks/useInput";
 import useForm from "hooks/useForm";
+import IconModel from "@/shared/icons/IconModel";
+import { sendRequest, getApiUrl } from "util/request";
 
-const EditableInput = ({ inputName, inputValue, inputType, formAction }) => {
+const EditableInput = ({
+  inputName,
+  inputValue,
+  inputType,
+  formAction,
+  inputMaxLength,
+}) => {
   const { inputResponse, validateUserName, validateEmail, validatePassword } =
     useInput();
   const [editMode, setEditMode] = useState(false);
-  const { formResponse, handleFormRequest } = useForm();
+  const inputRef = useRef(null);
 
-  useEffect(() => {
-    if (formResponse.isFormValid) {
-      setEditMode(false);
-    }
-  }, [formResponse.isFormValid]);
-
-  const edit = () => {
+  const handleInputOnChange = () => {
     setEditMode(true);
-  };
+    const i = inputRef.current;
 
-  const quitEditting = () => {
-    setEditMode(false);
+    if (!i) return;
+
+    if (i.name === "username") {
+      validateUserName(i.value);
+    }
+
+    if (i.name === "email") {
+      validateEmail(i.value);
+    }
+
+    if (i.name === "password") {
+      validatePassword(i.value);
+    }
+
+    const iRes = inputResponse[i.name];
+
+    const valid = ["valid", "text-green"];
+    const invalid = ["invalid", "text-red"];
+
+    if (iRes.isValid) {
+      i.classList.add(...valid);
+      i.classList.remove(...invalid);
+    } else {
+      i.classList.add(...invalid);
+      i.classList.remove(...valid);
+    }
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const input = e.target[0];
-    const inputName = input.name;
-    const inputValue = input.value;
 
-    if (input.className.includes("true")) {
-      await handleFormRequest("PATCH", formAction, true, true, {
-        [inputName]: inputValue,
+    if (inputRef.current.className.includes("valid")) {
+      const res = await sendRequest({
+        method: "PATCH",
+        url: getApiUrl() + formAction,
+        resource: {
+          [inputRef.current.name]: inputRef.current.value,
+        },
       });
+
+      if (res.ok) {
+        setEditMode(false);
+      }
     }
   };
+
+  if (!editMode) {
+    const valid = ["valid", "text-green"];
+    const invalid = ["invalid", "text-red"];
+
+    if (inputRef.current) {
+      inputRef.current.classList.remove(...valid, ...invalid);
+    }
+  }
 
   return (
     <div>
@@ -49,44 +89,28 @@ const EditableInput = ({ inputName, inputValue, inputType, formAction }) => {
           <div className="flex">
             <input
               type={inputType}
-              className={`text-sm bg-dark outline-none flex-1 ${
-                inputName === "username"
-                  ? inputResponse.username.isValid
-                  : inputName === "email"
-                  ? inputResponse.email.isValid
-                  : inputName === "password"
-                  ? inputResponse.pass.isValid
-                  : ""
-              }`}
+              className="text-sm bg-dark outline-none flex-1"
               placeholder={
-                inputType === "password" ? ".............." : inputValue
+                inputType === "password" ? "................." : inputValue
               }
               name={inputName}
               id={inputName}
-              onChange={(e) => {
-                if (inputName === "username") {
-                  validateUserName(e.target.value);
-                } else if (inputName === "email") {
-                  validateEmail(e.target.value);
-                } else if (inputName === "password") {
-                  validatePassword(e.target.value);
-                }
-              }}
-              onClick={edit}
+              onChange={handleInputOnChange}
               autoComplete="off"
+              ref={inputRef}
+              maxLength={inputMaxLength}
             />
-            {editMode && (
-              <div className="flex gap-x-4 flex-1">
-                <button
-                  type="button"
-                  className="bg-light w-full text-dark font-semibold rounded flex items-center justify-center hover:opacity-85 text-xs"
-                  onClick={quitEditting}
-                >
-                  Quit
-                </button>
-                <FormButton className="w-full text-xs" text="Save" />
-              </div>
-            )}
+            {editMode &&
+              inputRef.current &&
+              inputRef.current.className.includes("invalid") && (
+                <IconModel className="text-red flex-1">close</IconModel>
+              )}
+            {editMode &&
+              inputRef.current &&
+              inputRef.current.className.includes("valid") &&
+              !inputRef.current.className.includes("invalid") && (
+                <IconModel className="text-green flex-1">done</IconModel>
+              )}
           </div>
         </div>
       </form>

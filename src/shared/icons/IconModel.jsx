@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
-const ImageNotFound = ({ className, fontSize }) => {
+const IconModel = ({ fontSize, title, children, className }) => {
   return (
     <span
       style={{ fontSize: fontSize }}
       className={`material-icons-outlined ${className}`}
-      title="Image"
+      title={title}
     >
-      image
+      {children}
     </span>
   );
 };
 
-export default ImageNotFound;
+export default IconModel;

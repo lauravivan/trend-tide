@@ -18,18 +18,13 @@ const initialState = {
     isValid: false,
     value: null,
   },
-  pass: {
+  password: {
     state: initialStateVal,
     isValid: false,
     value: null,
   },
-  confirmedPass: {
+  confirmedPassword: {
     state: initialStateVal,
-    isValid: false,
-    value: null,
-  },
-  pickedFile: {
-    state: null,
     isValid: false,
     value: null,
   },
@@ -83,7 +78,7 @@ const inputReducer = (state, action) => {
       const isValid = validatePassword(value);
       return {
         ...state,
-        pass: {
+        password: {
           state: isValid ? valid : invalid,
           isValid: isValid,
           value: value,
@@ -114,12 +109,12 @@ const inputReducer = (state, action) => {
       if (passwordsValid && passwordsMatch) {
         return {
           ...state,
-          pass: {
+          password: {
             state: valid,
             isValid: true,
             value: value.password,
           },
-          confirmedPass: {
+          confirmedPassword: {
             state: valid,
             isValid: true,
             value: value.passwordConfirmed,
@@ -129,52 +124,16 @@ const inputReducer = (state, action) => {
 
       return {
         ...state,
-        pass: {
+        password: {
           state: invalid,
           isValid: false,
           value: value.password,
         },
-        confirmedPass: {
+        confirmedPassword: {
           state: invalid,
           message: errorMsg,
           isValid: false,
           value: value.passwordConfirmed,
-        },
-      };
-    }
-
-    case "VALIDATE_FILE": {
-      let pickedFile;
-
-      if (value.target.files || value.target.files.length === 1) {
-        pickedFile = value.target.files[0];
-      } else {
-        return {
-          ...state,
-        };
-      }
-
-      const handlePreviewRequest = () => {
-        return new Promise((resolve, reject) => {
-          if (!pickedFile) {
-            reject(new Error("No file picked"));
-            return;
-          }
-          const fileReader = new FileReader();
-          fileReader.onload = () => {
-            resolve(fileReader.result);
-          };
-          fileReader.onerror = reject;
-          fileReader.readAsDataURL(pickedFile);
-        });
-      };
-
-      return {
-        ...state,
-        pickedFile: {
-          state: "",
-          isValid: true,
-          value: handlePreviewRequest(),
         },
       };
     }
@@ -261,13 +220,6 @@ function useInput() {
     });
   };
 
-  const validateFile = (file) => {
-    dispatch({
-      type: "VALIDATE_FILE",
-      payload: file,
-    });
-  };
-
   const validateCommonInput = (input) => {
     dispatch({
       type: "VALIDATE_COMMON_INPUT",
@@ -288,7 +240,6 @@ function useInput() {
     validatePassword,
     validateUserName,
     validatePasswords,
-    validateFile,
     validateCommonInput,
     validateTextArea,
   };

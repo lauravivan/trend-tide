@@ -6,8 +6,8 @@
 
 const sendRequest = async ({
   method = "GET",
-  url = "",
-  resource = "",
+  url = undefined,
+  resource = undefined,
   isJSON = true,
 }) => {
   let response;
@@ -15,58 +15,27 @@ const sendRequest = async ({
   try {
     if (method === "GET") {
       response = await fetch(url);
-
-      if (response.ok) {
-        const res = await response.json();
-
-        return {
-          status: "success",
-          data: res,
-          message: "",
-        };
-      } else {
-        const res = await response.json();
-
-        return {
-          status: "failed",
-          data: [],
-          message: res.message,
-        };
-      }
     } else {
-      if (!isJSON) {
-        response = await fetch(url, {
-          method: method,
-          body: resource,
-        });
+      const data = {};
+
+      data["method"] = method;
+
+      if (isJSON) {
+        data["headers"] = {
+          "Content-Type": "application/json",
+        };
+
+        if (resource) {
+          data["body"] = JSON.stringify(resource);
+        }
       } else {
-        response = await fetch(url, {
-          method: method,
-          body: JSON.stringify(resource),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        data["body"] = resource;
       }
 
-      if (response.ok) {
-        const res = await response.json();
-
-        return {
-          status: "success",
-          message: res.message,
-          token: res.token ? res.token : "",
-          uid: res.uid ? res.uid : "",
-        };
-      } else {
-        const res = await response.json();
-
-        return {
-          status: "failed",
-          message: res.message,
-        };
-      }
+      response = await fetch(url, data);
     }
+
+    return response;
   } catch (error) {
     console.log(error);
   }

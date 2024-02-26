@@ -2,64 +2,61 @@ import Input from "UIElements/Input";
 import FilePicker from "UIElements/FilePicker";
 import FormButton from "UIElements/FormButton";
 import useInput from "hooks/useInput";
-import useForm from "hooks/useForm";
 import { getCredentials } from "util/store";
-import { UploadIcon } from "icons/Icon";
-import Modal from "UIElements/Modal";
 import { useNavigate } from "react-router-dom";
+import { sendRequest, getApiUrl } from "util/request";
+import { useRef, useState } from "react";
+import IconModel from "@/shared/icons/IconModel";
 
 function CreatePost() {
-  const { inputResponse, validateFile, validateCommonInput, validateTextArea } =
-    useInput();
-  const { formResponse, handleFormRequest } = useForm();
+  const { inputResponse, validateCommonInput, validateTextArea } = useInput();
   const navigate = useNavigate();
+  const filePickerRef = useRef(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
-  const redirect = () => {
-    navigate("/trend-tide");
-  };
-
-  if (formResponse.isFormValid) {
-    setTimeout(redirect, 3000);
-  }
-
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     const currentDate = new Date();
 
-    if (inputResponse.pickedFile.value) {
-      inputResponse.pickedFile.value.then((result) => {
-        if (inputResponse.input.isValid && inputResponse.textarea.isValid) {
-          formData.append("title", inputResponse.input.value);
-          formData.append("content", inputResponse.textarea.value);
-          formData.append("author", getCredentials().uid);
-          formData.append("creationDate", currentDate);
-          formData.append("image", result);
+    if (inputResponse.input.isValid && inputResponse.textarea.isValid) {
+      formData.append("title", inputResponse.input.value);
+      formData.append("content", inputResponse.textarea.value);
+      formData.append("author", getCredentials().uid);
+      formData.append("creationDate", currentDate);
 
-          handleFormRequest("POST", "post/new-post", false, true, formData);
+      if (filePickerRef.current) {
+        if (filePickerRef.current.files[0]) {
+          formData.append("image", filePickerRef.current.files[0]);
         }
-      });
-    } else {
-      if (inputResponse.input.isValid && inputResponse.textarea.isValid) {
-        formData.append("title", inputResponse.input.value);
-        formData.append("content", inputResponse.textarea.value);
-        formData.append("author", getCredentials().uid);
-        formData.append("creationDate", currentDate);
-
-        handleFormRequest("POST", "post/new-post", false, true, formData);
       }
+    }
+
+    const res = await sendRequest({
+      method: "POST",
+      url: getApiUrl() + "post/new-post",
+      resource: formData,
+      isJSON: false,
+    });
+
+    if (res.ok) {
+      navigate("/trend-tide");
     }
   };
 
+  const handleImageDeletion = () => {
+    setImageUrl(null);
+  };
+
   return (
-    <div className="w-full h-full p-5 relative">
+    <div className="relative">
       <form
-        className="flex h-full"
         onSubmit={(e) => {
           handleFormSubmit(e);
         }}
       >
-        <div className="flex flex-1 m-auto flex-col content-stretch gap-y-3 h-full">
+        <div className="flex flex-1 m-auto flex-col content-stretch gap-y-3">
           <Input
             type="text"
             placeholder="Title goes here"
@@ -87,24 +84,22 @@ function CreatePost() {
                 id="postContent"
               ></textarea>
               <div
-                className={`m-3 bg-gray rounded text-center py-6 cursor-pointer hover:opacity-90`}
+                className={`m-3 bg-gray rounded flex gap-x-2 items-center justify-center py-6 cursor-pointer hover:opacity-90`}
               >
                 <FilePicker
-                  onChange={(e) => {
-                    validateFile(e);
-                  }}
-                  previewUrlPromise={inputResponse.pickedFile.value}
-                  btnContent={<UploadIcon fontSize="25px" />}
-                  btnClassName="bg-dark rounded-full text-white cursor-pointer py-2 px-3"
-                  imageSize="w-10"
+                  imageSize="w-10 h-10"
+                  ref={filePickerRef}
+                  imageUrl={imageUrl}
                 />
+                <button type="button" onClick={handleImageDeletion}>
+                  <IconModel>delete</IconModel>
+                </button>
               </div>
             </div>
           </div>
           <FormButton text="Post" />
         </div>
       </form>
-      {formResponse.message && <Modal content={formResponse.message} />}
     </div>
   );
 }

@@ -1,13 +1,18 @@
 /* eslint-disable react/prop-types */
-import DialogBox from "UIElements/DialogBox";
 import FormButton from "UIElements/FormButton";
 import ButtonLink from "UIElements/ButtonLink";
 import Input from "UIElements/Input";
 import useInput from "hooks/useInput";
 import { Link } from "react-router-dom";
-import useForm from "hooks/useForm";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { InfoIcon } from "icons/Icon";
+import Modal from "UIElements/Modal";
+import useModal from "hooks/useModal";
+import Button from "UIElements/Button";
+import { sendRequest, getApiUrl } from "util/request";
+import Loading from "UIElements/Loading";
+import { useAuthContext } from "context/authContext";
 
 function Auth({
   cardTitle,
@@ -28,95 +33,110 @@ function Auth({
     validatePasswords,
   } = useInput();
 
-  const { formResponse, handleFormRequest } = useForm();
+  const [requestRes, setRequestRes] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [formHasBeenSubmitted, setFormHasBeenSubmitted] = useState(false);
+  const { openModal, closed, closeModal } = useModal();
+
+  const [waitingResponse, setWaitingResponse] = useState(false);
+
+  const { signIn } = useAuthContext();
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const redirect = () => {
-      navigate(redirectPath);
-    };
+  const redirect = () => {
+    navigate(redirectPath);
+  };
 
-    if (formResponse.message) {
-      setIsLoading(false);
-    }
-
-    if (formResponse.isFormValid && formResponse.message) {
-      setTimeout(redirect, 1500);
-    }
-
-    if (formHasBeenSubmitted && !formResponse.message) {
-      setIsLoading(true);
-    }
-  }, [
-    formResponse.message,
-    formHasBeenSubmitted,
-    redirectPath,
-    navigate,
-    formResponse.isFormValid,
-  ]);
-
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setFormHasBeenSubmitted(true);
     const data = {};
-    let isFormValid = true;
 
-    if (inputResponse.email.isValid && inputResponse.pass.isValid) {
+    if (inputResponse.email.isValid && inputResponse.password.isValid) {
       data["email"] = inputResponse.email.value;
-      data["password"] = inputResponse.pass.value;
+      data["password"] = inputResponse.password.value;
 
       if (hasUserName && inputResponse.username.isValid) {
         data["username"] = inputResponse.username.value;
       }
 
-      if (hasPassConfirmed && inputResponse.confirmedPass.isValid) {
-        data["passwordConfirmed"] = inputResponse.confirmedPass.value;
+      if (hasPassConfirmed && inputResponse.confirmedPassword.isValid) {
+        data["passwordConfirmed"] = inputResponse.confirmedPassword.value;
       }
-    } else {
-      isFormValid = false;
-    }
 
-    handleFormRequest(method, action, true, isFormValid, data);
+      try {
+        setWaitingResponse(true);
+        const res = await sendRequest({
+          method: method,
+          url: getApiUrl() + action,
+          resource: data,
+        });
+
+        if (res) {
+          setWaitingResponse(false);
+        }
+
+        const resJSON = await res.json();
+
+        if (res.ok) {
+          setRequestRes({
+            ok: true,
+            message: resJSON.message,
+          });
+
+          if (resJSON.token) {
+            signIn(resJSON.token, resJSON.uid);
+          }
+
+          setTimeout(redirect, 1000);
+        } else {
+          setRequestRes({
+            ok: false,
+            message: resJSON.message,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   return (
     <>
       <header className="flex items-center gap-x-4 mb-10">
         <h3 className="text-lg">{cardTitle}</h3>
-        <DialogBox
-          message={
-            <ul className="leading-7 font-bold">
-              {hasUserName && (
-                <li>
-                  <span className="text-pastel-purple">Username:</span>{" "}
-                  <span className="text-pastel-creme">
-                    Can contain symbols (%,$,#,*), digits and letters, having
-                    between 5 and 15 characters, with at least 3 non-capital
-                    letters
-                  </span>
-                </li>
-              )}
+        <button className="flex" onClick={openModal}>
+          <InfoIcon fontSize="25px" />
+        </button>
+        <Modal isClosed={closed}>
+          <ul className="leading-7 font-bold">
+            {hasUserName && (
               <li>
-                <span className="text-pastel-orange">Email:</span>{" "}
+                <span className="text-pastel-purple">Username:</span>{" "}
                 <span className="text-pastel-creme">
-                  Must contain @ and at least one .
+                  Can contain symbols (%,$,#,*), digits and letters, having
+                  between 5 and 15 characters, with at least 3 non-capital
+                  letters
                 </span>
               </li>
-              <li>
-                <span className="text-pastel-green">Password:</span>{" "}
-                <span className="text-pastel-creme">
-                  Must contain between 9 and 40 characteres having at least one
-                  symbol, one capital letter, one digit and one non-capital
-                  letter
-                </span>
-              </li>
-            </ul>
-          }
-        />
+            )}
+            <li>
+              <span className="text-pastel-orange">Email:</span>{" "}
+              <span className="text-pastel-creme">
+                Must contain @ and at least one .
+              </span>
+            </li>
+            <li>
+              <span className="text-pastel-green">Password:</span>{" "}
+              <span className="text-pastel-creme">
+                Must contain between 9 and 40 characteres having at least one
+                symbol, one capital letter, one digit and one non-capital letter
+              </span>
+            </li>
+          </ul>
+          <Button onClick={closeModal} className="bg-light text-dark mt-3">
+            Close
+          </Button>
+        </Modal>
       </header>
       <main className="mb-4">
         <form
@@ -159,13 +179,13 @@ function Auth({
               if (hasPassConfirmed) {
                 validatePasswords(
                   e.target.value,
-                  inputResponse.confirmedPass.value
+                  inputResponse.confirmedPassword.value
                 );
               } else {
                 validatePassword(e.target.value);
               }
             }}
-            className={inputResponse.pass.state}
+            className={inputResponse.password.state}
             maxLength={50}
           />
           {hasPassConfirmed && (
@@ -176,12 +196,15 @@ function Auth({
                 id="auth-pass-conf"
                 name="passwordConfirmed"
                 onChange={(e) => {
-                  validatePasswords(inputResponse.pass.value, e.target.value);
+                  validatePasswords(
+                    inputResponse.password.value,
+                    e.target.value
+                  );
                 }}
-                className={inputResponse.confirmedPass.state}
+                className={inputResponse.confirmedPassword.state}
                 maxLength={50}
               />
-              <small>{inputResponse.confirmedPass.message}</small>
+              <small>{inputResponse.confirmedPassword.message}</small>
             </>
           )}
 
@@ -202,9 +225,14 @@ function Auth({
               </span>{" "}
             </div>
           )}
-          {formResponse.message && (
+          {requestRes && (
             <div className={`bg-black text-white w-full rounded-lg py-2 px-3`}>
-              <span>{formResponse.message}</span>
+              <span>{requestRes.message}</span>
+            </div>
+          )}
+          {waitingResponse && (
+            <div className={`bg-black text-white w-full rounded-lg py-2 px-3`}>
+              <Loading />
             </div>
           )}
           <div className="flex gap-x-4 mt-1">
@@ -213,12 +241,7 @@ function Auth({
               href={btnBackHref}
               text="Go back"
             />
-            <FormButton
-              type="submit"
-              text={btnText}
-              isLoading={isLoading}
-              className="w-full"
-            />
+            <FormButton type="submit" text={btnText} className="w-full" />
           </div>
         </form>
       </main>

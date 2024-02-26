@@ -2,7 +2,9 @@
 import { useState, useEffect } from "react";
 import { sendRequest, getApiUrl } from "util/request";
 import Post from "./Post";
-import Request from "components/Request";
+import Return from "UIElements/Return";
+import Loading from "UIElements/Loading";
+import { getCredentials } from "util/store";
 
 const ListPosts = ({ actionPath, maxLength = 10 }) => {
   const [pageCounter, setPageCounter] = useState(maxLength);
@@ -18,8 +20,20 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
           url: getApiUrl() + actionPath,
         });
 
-        setRequestRes(res);
-        setTotalPosts(res.data.length);
+        if (res.ok) {
+          const resJSON = await res.json();
+          setRequestRes({
+            ok: true,
+            data: resJSON,
+          });
+          setTotalPosts(resJSON.length);
+        } else {
+          const resJSON = await res.json();
+          setRequestRes({
+            ok: false,
+            message: resJSON.message,
+          });
+        }
       } catch (error) {
         console.log(error);
       }
@@ -29,14 +43,14 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
   }, [actionPath]);
 
   useEffect(() => {
-    if (requestRes) {
+    if (requestRes && requestRes.ok) {
       const itemsTotal = pageCounter - (pageCounter - totalPosts);
       setItemsPerView(itemsTotal);
     }
   }, [pageCounter, requestRes, totalPosts]);
 
   const getMoreItems = () => {
-    if (requestRes) {
+    if (requestRes && requestRes.ok) {
       setPageCounter(pageCounter - (totalPosts - maxLength));
     }
   };
@@ -57,7 +71,9 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
     <div className="w-full h-full flex flex-col content-between">
       <section className="w-full flex justify-between items-center mb-4">
         <div>
-          {requestRes && <span>{itemsPerView + " of " + totalPosts}</span>}
+          {requestRes && requestRes.ok && (
+            <span>{itemsPerView + " of " + totalPosts}</span>
+          )}
         </div>
         <div className={`flex items-center`}>
           <button
@@ -90,21 +106,19 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
       </section>
 
       <section className="w-full flex flex-1">
-        <Request requestRes={requestRes}>
+        {requestRes && requestRes.ok && (
           <div
             className={`gap-10 w-full mb-10 ${
               view === "grid" ? "grid custom-grid" : "flex flex-1 flex-col"
             }`}
           >
-            {requestRes &&
+            {requestRes.data &&
               requestRes.data.map((post, index) => {
                 let isFavorite;
 
-                if (post.author.favoritePosts) {
-                  isFavorite = post.author.favoritePosts.find(
-                    (favPost) => favPost._id === post._id
-                  );
-                }
+                isFavorite = post.usersWhoLiked.find(
+                  (favPost) => favPost === getCredentials().uid
+                );
 
                 if (index < pageCounter) {
                   return (
@@ -113,11 +127,11 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
                         author={post.author.username}
                         title={post.title}
                         content={post.content}
-                        imageUrl={post.image}
+                        imageUrl={post.image.url}
                         creationDate={post.creationDate}
                         pid={post._id}
                         checkFavorite={true}
-                        isFavorite={isFavorite ? true : false}
+                        isFavorite={isFavorite || null}
                         qntOfLikes={post.usersWhoLiked.length}
                       />
                     </div>
@@ -125,7 +139,15 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
                 }
               })}
           </div>
-        </Request>
+        )}
+
+        {requestRes && !requestRes.ok && <Return>{requestRes.message}</Return>}
+
+        {!requestRes && (
+          <Return>
+            <Loading />
+          </Return>
+        )}
       </section>
 
       <section className="mt-10 mb-0">

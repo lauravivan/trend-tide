@@ -1,5 +1,5 @@
 const validateEmail = (email) => {
-  return /^(\w+)@(\w+)\.([a-z]{2,8})([a-z]{2,8})?$/.test(email);
+  return /^(\w+)@(\w+)\.([a-z]{2,8})\.([a-z]{2,8})?$/.test(email);
 };
 
 const validatePassword = (password) => {

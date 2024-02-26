@@ -19,13 +19,7 @@ function Post({
   qntOfLikes = "",
 }) {
   const [isFavorited, setIsFavorited] = useState(isFavorite);
-  const [updateQntOfLikes, setUpdateQntOfLikes] = useState(qntOfLikes);
-
-  useEffect(() => {
-    if (qntOfLikes !== updateQntOfLikes) {
-      setUpdateQntOfLikes(qntOfLikes);
-    }
-  }, [qntOfLikes, updateQntOfLikes]);
+  const [likes, setLikes] = useState(qntOfLikes);
 
   const handleBtnClick = () => {
     setIsFavorited(!isFavorited);
@@ -34,7 +28,7 @@ function Post({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isFavorite) {
+    if (!isFavorited) {
       try {
         const res = await sendRequest({
           method: "PATCH",
@@ -46,7 +40,10 @@ function Post({
             pid,
           isJSON: false,
         });
-        console.log(res);
+
+        if (res.ok) {
+          setLikes((prevLikes) => prevLikes - 1);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -62,7 +59,10 @@ function Post({
             pid,
           isJSON: false,
         });
-        console.log(res);
+
+        if (res.ok) {
+          setLikes((prevLikes) => prevLikes + 1);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -105,7 +105,7 @@ function Post({
                 <span>
                   <span className="relative">
                     <span className="absolute text-dark bottom-2 -right-3">
-                      {updateQntOfLikes}
+                      {likes}
                     </span>
                     {!isFavorited && <Heart />}
                     {isFavorited && <HeartFavorite className="text-red" />}
