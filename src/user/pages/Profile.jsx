@@ -21,20 +21,19 @@ const Profile = () => {
 
   useEffect(() => {
     if (delBtnRef.current) {
-      delBtnRef.current.addEventListener("click", async () => {
-        try {
-          const res = await sendRequest({
-            method: "DELETE",
-            url: getApiUrl() + `user/delete-account/${getCredentials().uid}`,
-          });
+      delBtnRef.current.addEventListener("click", handleAccountDeletion);
 
-          if (res.ok) {
-            signOut();
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      });
+      return () => {
+        delBtnRef.current.removeEventListener("click", handleAccountDeletion);
+      };
+    }
+
+    if (filePickerRef.current) {
+      filePickerRef.current.addEventListener("change", handleFileChange);
+
+      return () => {
+        filePickerRef.current.removeEventListener("change", handleFileChange);
+      };
     }
   });
 
@@ -70,18 +69,6 @@ const Profile = () => {
     fetchData();
   }, []);
 
-  if (filePickerRef.current) {
-    filePickerRef.current.addEventListener("change", () => {
-      setTimeout(() => {
-        if (filePickerRef.current.className.includes("valid")) {
-          setEditMode(true);
-        } else {
-          setEditMode(false);
-        }
-      }, 100);
-    });
-  }
-
   const handleFileSubmission = async () => {
     setWaitingResponse(true);
 
@@ -107,7 +94,7 @@ const Profile = () => {
     }
   };
 
-  const handlePicDeletion = async () => {
+  const handleFileDeletion = async () => {
     setWaitingResponse(true);
 
     try {
@@ -119,6 +106,31 @@ const Profile = () => {
       if (res.ok) {
         setWaitingResponse(false);
         setDeleteMode(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFileChange = () => {
+    setTimeout(() => {
+      if (filePickerRef.current.className.includes("valid")) {
+        setEditMode(true);
+      } else {
+        setEditMode(false);
+      }
+    }, 100);
+  };
+
+  const handleAccountDeletion = async () => {
+    try {
+      const res = await sendRequest({
+        method: "DELETE",
+        url: getApiUrl() + `user/delete-account/${getCredentials().uid}`,
+      });
+
+      if (res.ok) {
+        signOut();
       }
     } catch (error) {
       console.log(error);
@@ -150,7 +162,7 @@ const Profile = () => {
               {deleteMode && (
                 <button
                   className="text-center mt-4"
-                  onClick={handlePicDeletion}
+                  onClick={handleFileDeletion}
                 >
                   <IconModel title="Delete">delete</IconModel>
                 </button>
