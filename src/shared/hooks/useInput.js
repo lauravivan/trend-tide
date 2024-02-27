@@ -5,119 +5,106 @@ import {
   validateUserName,
 } from "util/validator";
 
-const initialStateVal = "bg-white text-black invalid";
-
-const initialState = {
-  email: {
-    state: initialStateVal,
-    isValid: false,
-    value: null,
-  },
-  username: {
-    state: initialStateVal,
-    isValid: false,
-    value: null,
-  },
-  password: {
-    state: initialStateVal,
-    isValid: false,
-    value: null,
-  },
-  confirmedPassword: {
-    state: initialStateVal,
-    isValid: false,
-    value: null,
-  },
-  input: {
-    state: initialStateVal,
-    isValid: false,
-    value: null,
-  },
-  textarea: {
-    state: initialStateVal,
-    isValid: false,
-    value: null,
-  },
-};
-
 const inputReducer = (state, action) => {
-  const valid = "bg-green placeholder:text-white valid";
-  const invalid = "bg-red placeholder:text-white invalid";
   const value = action.payload;
 
-  if (value.length === 0) {
-    return initialState;
-  }
+  const valid = {
+    state: "bg-green placeholder:text-white",
+    isValid: true,
+    value: value,
+  };
+
+  const invalid = {
+    state: "bg-red placeholder:text-white",
+    isValid: false,
+    value: value,
+    invalidMsg: "",
+  };
 
   switch (action.type) {
     case "VALIDATE_EMAIL": {
       const isValid = validateEmail(value);
+      invalid["invalidMsg"] = "Example: bear@example.com";
+
+      if (value.length === 0 || !isValid) {
+        return {
+          ...state,
+          email: invalid,
+        };
+      }
+
       return {
         ...state,
-        email: {
-          state: isValid ? valid : invalid,
-          isValid: isValid,
-          value: value,
-        },
+        email: valid,
       };
     }
 
     case "VALIDATE_USERNAME": {
       const isValid = validateUserName(value);
+      invalid["invalidMsg"] =
+        "Must have at least 5 characters and 3 non-capital letters";
+
+      if (value.length === 0 || !isValid) {
+        return {
+          ...state,
+          username: invalid,
+        };
+      }
+
       return {
         ...state,
-        username: {
-          state: isValid ? valid : invalid,
-          isValid: isValid,
-          value: value,
-        },
+        username: valid,
       };
     }
 
     case "VALIDATE_PASSWORD": {
       const isValid = validatePassword(value);
+      invalid["invalidMsg"] =
+        "Must have at least one symbol, one capital letter, one non-capital letter and one digit.";
+
+      if (value.length === 0 || !isValid) {
+        return {
+          ...state,
+          password: invalid,
+        };
+      }
+
       return {
         ...state,
-        password: {
-          state: isValid ? valid : invalid,
-          isValid: isValid,
-          value: value,
-        },
+        password: valid,
       };
     }
 
     case "VALIDATE_PASSWORDS": {
-      let passwordsValid = false;
-      let passwordsMatch = false;
-      let errorMsg;
+      let invalidMsg;
 
       if (
-        validatePassword(value.password) &&
-        validatePassword(value.passwordConfirmed)
+        !(
+          validatePassword(value.password) &&
+          validatePassword(value.passwordConfirmed)
+        )
       ) {
-        passwordsValid = true;
-      } else {
-        errorMsg = "Invalid passwords";
+        invalidMsg =
+          "Password must have at least one symbol, one capital letter, one non-capital letter and one digit.";
       }
 
-      if (value.password === value.passwordConfirmed) {
-        passwordsMatch = true;
-      } else {
-        errorMsg = `The passwords don't match. Please verify data.`;
+      if (!(value.password === value.passwordConfirmed)) {
+        invalidMsg = `The passwords don't match. Please verify data.`;
       }
 
-      if (passwordsValid && passwordsMatch) {
+      if (invalidMsg) {
         return {
           ...state,
           password: {
-            state: valid,
-            isValid: true,
+            state: invalid["state"],
+            isValid: invalid["isValid"],
             value: value.password,
           },
           confirmedPassword: {
-            state: valid,
-            isValid: true,
+            state: invalid["state"],
+            isValid: invalid["isValid"],
             value: value.passwordConfirmed,
+            invalidMsg: invalidMsg,
           },
         };
       }
@@ -125,14 +112,13 @@ const inputReducer = (state, action) => {
       return {
         ...state,
         password: {
-          state: invalid,
-          isValid: false,
+          state: valid["state"],
+          isValid: valid["isValid"],
           value: value.password,
         },
         confirmedPassword: {
-          state: invalid,
-          message: errorMsg,
-          isValid: false,
+          state: valid["state"],
+          isValid: valid["isValid"],
           value: value.passwordConfirmed,
         },
       };
@@ -142,42 +128,26 @@ const inputReducer = (state, action) => {
       if (value.length > 0) {
         return {
           ...state,
-          input: {
-            state: valid,
-            isValid: true,
-            value: value,
-          },
+          input: valid,
         };
       }
 
       return {
         ...state,
-        input: {
-          state: invalid,
-          isValid: false,
-          value: value,
-        },
+        input: invalid,
       };
 
     case "VALIDATE_TEXTAREA":
       if (value.length > 0) {
         return {
           ...state,
-          textarea: {
-            state: valid,
-            isValid: true,
-            value: value,
-          },
+          textarea: valid,
         };
       }
 
       return {
         ...state,
-        textarea: {
-          state: invalid,
-          isValid: false,
-          value: value,
-        },
+        textarea: invalid,
       };
 
     default: {
@@ -187,7 +157,39 @@ const inputReducer = (state, action) => {
 };
 
 function useInput() {
-  const [state, dispatch] = useReducer(inputReducer, initialState);
+  const initialState = "bg-white text-black invalid";
+  const [state, dispatch] = useReducer(inputReducer, {
+    email: {
+      state: initialState,
+      isValid: false,
+      value: null,
+    },
+    username: {
+      state: initialState,
+      isValid: false,
+      value: null,
+    },
+    password: {
+      state: initialState,
+      isValid: false,
+      value: null,
+    },
+    confirmedPassword: {
+      state: initialState,
+      isValid: false,
+      value: null,
+    },
+    input: {
+      state: initialState,
+      isValid: false,
+      value: null,
+    },
+    textarea: {
+      state: initialState,
+      isValid: false,
+      value: null,
+    },
+  });
 
   const validateEmail = (email) => {
     dispatch({
