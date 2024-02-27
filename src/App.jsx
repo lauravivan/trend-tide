@@ -16,7 +16,7 @@ import CreatePost from "@/posts/pages/CreatePost";
 import Post from "@/posts/pages/Post";
 import UserPosts from "@/posts/pages/UserPosts";
 import FavoritePosts from "@/posts/pages/FavoritePosts";
-import AuthProvider from "components/AuthProvider";
+import AuthProvider from "context/AuthProvider";
 import { StrictMode } from "react";
 
 const router = createRouter([

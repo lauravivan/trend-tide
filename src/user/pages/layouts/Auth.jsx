@@ -1,12 +1,10 @@
 /* eslint-disable react/prop-types */
-import FormButton from "UIElements/FormButton";
-import ButtonLink from "UIElements/ButtonLink";
 import Input from "UIElements/Input";
 import useInput from "hooks/useInput";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { InfoIcon } from "icons/Icon";
+import Icon from "UIElements/Icon";
 import Modal from "UIElements/Modal";
 import useModal from "hooks/useModal";
 import Button from "UIElements/Button";
@@ -105,7 +103,7 @@ function Auth({
       <header className="flex items-center gap-x-4 mb-10">
         <h3 className="text-lg">{cardTitle}</h3>
         <button className="flex" onClick={openModal}>
-          <InfoIcon fontSize="25px" />
+          <Icon fontSize="30px">info</Icon>
         </button>
         <Modal isClosed={closed}>
           <ul className="leading-7 font-bold">
@@ -147,49 +145,58 @@ function Auth({
           }}
         >
           {hasUserName && (
+            <div>
+              <Input
+                type="text"
+                placeholder="Your username"
+                id="auth-username"
+                name="username"
+                onChange={(e) => {
+                  validateUserName(e.target.value);
+                }}
+                className={inputResponse.username.state}
+                maxLength={50}
+              />
+              <small>{inputResponse.username.invalidMsg}</small>
+            </div>
+          )}
+          <div>
             <Input
               type="text"
-              placeholder="Your username"
-              id="auth-username"
-              name="username"
+              placeholder="Your e-mail"
+              id="auth-email"
+              name="email"
               onChange={(e) => {
-                validateUserName(e.target.value);
+                validateEmail(e.target.value);
               }}
-              className={inputResponse.username.state}
+              className={inputResponse.email.state}
               maxLength={50}
             />
-          )}
-          <Input
-            type="text"
-            placeholder="Your e-mail"
-            id="auth-email"
-            name="email"
-            onChange={(e) => {
-              validateEmail(e.target.value);
-            }}
-            className={inputResponse.email.state}
-            maxLength={50}
-          />
-          <Input
-            type="password"
-            placeholder="Your password"
-            id="auth-pass"
-            name="password"
-            onChange={(e) => {
-              if (hasPassConfirmed) {
-                validatePasswords(
-                  e.target.value,
-                  inputResponse.confirmedPassword.value
-                );
-              } else {
-                validatePassword(e.target.value);
-              }
-            }}
-            className={inputResponse.password.state}
-            maxLength={50}
-          />
+            <small>{inputResponse.email.invalidMsg}</small>
+          </div>
+          <div>
+            <Input
+              type="password"
+              placeholder="Your password"
+              id="auth-pass"
+              name="password"
+              onChange={(e) => {
+                if (hasPassConfirmed) {
+                  validatePasswords(
+                    e.target.value,
+                    inputResponse.confirmedPassword.value
+                  );
+                } else {
+                  validatePassword(e.target.value);
+                }
+              }}
+              className={inputResponse.password.state}
+              maxLength={50}
+            />
+            <small>{inputResponse.password.invalidMsg}</small>
+          </div>
           {hasPassConfirmed && (
-            <>
+            <div>
               <Input
                 type="password"
                 placeholder="Confirm your password"
@@ -204,8 +211,8 @@ function Auth({
                 className={inputResponse.confirmedPassword.state}
                 maxLength={50}
               />
-              <small>{inputResponse.confirmedPassword.message}</small>
-            </>
+              <small>{inputResponse.confirmedPassword.invalidMsg}</small>
+            </div>
           )}
 
           {isSignIn && (
@@ -236,12 +243,12 @@ function Auth({
             </div>
           )}
           <div className="flex gap-x-4 mt-1">
-            <ButtonLink
-              className="bg-light text-black"
-              href={btnBackHref}
-              text="Go back"
-            />
-            <FormButton type="submit" text={btnText} className="w-full" />
+            <Link className="w-full" to={btnBackHref}>
+              <Button className="bg-light text-black">Go back</Button>
+            </Link>
+            <Button type="submit" className="w-full bg-black">
+              {btnText}
+            </Button>
           </div>
         </form>
       </main>

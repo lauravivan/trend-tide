@@ -3,6 +3,7 @@ import Cat from "UIElements/Cat";
 
 const NotFound = () => {
   const error = useRouteError();
+
   return (
     <main className="h-screen">
       <div className="bg-dark text-white h-full flex">

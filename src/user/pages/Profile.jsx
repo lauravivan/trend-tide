@@ -6,7 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import { sendRequest, getApiUrl } from "util/request";
 import DeleteButton from "UIElements/DeleteButton";
 import Loading from "UIElements/Loading";
-import IconModel from "@/shared/icons/IconModel";
+import Icon from "UIElements/Icon";
 import Return from "UIElements/Return";
 import { useAuthContext } from "context/authContext";
 
@@ -164,7 +164,7 @@ const Profile = () => {
                   className="text-center mt-4"
                   onClick={handleFileDeletion}
                 >
-                  <IconModel title="Delete">delete</IconModel>
+                  <Icon title="Delete">delete</Icon>
                 </button>
               )}
 

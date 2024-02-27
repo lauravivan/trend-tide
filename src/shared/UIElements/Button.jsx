@@ -3,7 +3,7 @@
 import { forwardRef } from "react";
 
 const Button = forwardRef(function Button(
-  { type, className, onClick, children, isLoading = false },
+  { type = "button", className, onClick, children, isLoading = false },
   btnRef
 ) {
   return (

@@ -2,7 +2,7 @@
 import Modal from "UIElements/Modal";
 import useModal from "hooks/useModal";
 import Button from "UIElements/Button";
-import IconModel from "@/shared/icons/IconModel";
+import Icon from "UIElements/Icon";
 import { forwardRef } from "react";
 
 const DeleteButton = forwardRef(function DeleteButton(
@@ -26,7 +26,7 @@ const DeleteButton = forwardRef(function DeleteButton(
       <Modal isClosed={closed}>
         <div className="flex flex-col gap-y-10">
           <h3 className="flex items-center gap-x-2 text-xl text-red font-bold">
-            Warning <IconModel>warning</IconModel>
+            Warning <Icon>warning</Icon>
           </h3>
           <p>
             If you proceed data will be deleted. Do you still want to continue?

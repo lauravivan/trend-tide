@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
-import ImageNotFound from "UIElements/ImageNotFound";
-import Heart from "UIElements/Heart";
-import HeartFavorite from "UIElements/HeartFavorite";
-import { useState, useEffect } from "react";
+// import ImageNotFound from "UIElements/ImageNotFound";
+import { useState } from "react";
 import { sendRequest, getApiUrl } from "util/request";
 import { getCredentials } from "util/store";
+import Icon from "UIElements/Icon";
 
 function Post({
   pid,
@@ -81,12 +80,12 @@ function Post({
               src={imageUrl}
             />
           )}
-          {!imageUrl && (
+          {/* {!imageUrl && (
             <ImageNotFound
               className="w-full h-40 bg-gray rounded-lg text-light flex justify-center items-center"
               fontSize={"40px"}
             />
-          )}
+          )} */}
         </div>
         <footer className="flex justify-between items-center mt-auto">
           {checkFavorite && (
@@ -107,8 +106,8 @@ function Post({
                     <span className="absolute text-dark bottom-2 -right-3">
                       {likes}
                     </span>
-                    {!isFavorited && <Heart />}
-                    {isFavorited && <HeartFavorite className="text-red" />}
+                    {!isFavorited && <Icon>favorite</Icon>}
+                    {isFavorited && <Icon className="text-red">favorite</Icon>}
                   </span>
                 </span>
               </button>

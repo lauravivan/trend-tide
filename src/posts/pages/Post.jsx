@@ -1,9 +1,9 @@
 import { sendRequest, getApiUrl } from "util/request";
 import { useEffect, useState } from "react";
-import ImageNotFound from "UIElements/ImageNotFound";
+// import ImageNotFound from "UIElements/ImageNotFound";
 import Return from "UIElements/Return";
 import { getCredentials } from "util/store";
-import FormButton from "UIElements/FormButton";
+// import FormButton from "UIElements/FormButton";
 import { useNavigate } from "react-router-dom";
 import Loading from "UIElements/Loading";
 
@@ -69,10 +69,10 @@ function Post() {
                 />
               </div>
             )}
-
+            {/* 
             {!requestRes.data.author.profileImage && (
               <ImageNotFound className="flex items-center rounded-full bg-white text-dark p-7" />
-            )}
+            )} */}
 
             <div className="flex flex-col">
               <p>
@@ -98,12 +98,12 @@ function Post() {
 
           {requestRes.data.author._id === getCredentials().uid && (
             <div className="flex gap-x-3">
-              <FormButton className="bg-green px-3" text="Update"></FormButton>
+              {/* <FormButton className="bg-green px-3" text="Update"></FormButton>
               <FormButton
                 className="bg-red px-3"
                 text="Delete"
                 onClick={handleDeletionSubmit}
-              ></FormButton>
+              ></FormButton> */}
             </div>
           )}
         </section>
@@ -128,12 +128,12 @@ function Post() {
               </div>
             )}
 
-            {!requestRes.data.image && (
+            {/* {!requestRes.data.image && (
               <ImageNotFound
                 className="w-full h-40 bg-gray rounded-lg text-light flex justify-center items-center"
                 fontSize={"60px"}
               />
-            )}
+            )} */}
           </div>
         </section>
       </>

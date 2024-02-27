@@ -1,6 +1,7 @@
 import Cat from "UIElements/Cat";
 import { useAuthContext } from "context/authContext";
-import ButtonLink from "UIElements/ButtonLink";
+import Button from "UIElements/Button";
+import { Link } from "react-router-dom";
 
 function Homepage() {
   const { authState } = useAuthContext();
@@ -19,14 +20,15 @@ function Homepage() {
               </h3>
             </div>
             <div className="flex gap-x-2 mt-10">
-              <ButtonLink
-                text="Get started"
-                className="bg-dark text-white"
-                href={`${
-                  authState.isLoggedIn ? "/trend-tide" : "/account/signin"
-                }`}
-              />
-              <ButtonLink text="More" className="bg-pastel-purple" />
+              <Link
+                to={authState.isLoggedIn ? "/trend-tide" : "/account/signin"}
+                className="flex-1"
+              >
+                <Button className="bg-dark text-white">Get started</Button>
+              </Link>
+              <Link className="flex-1">
+                <Button className="bg-pastel-purple">More</Button>
+              </Link>
             </div>
           </div>
         </div>

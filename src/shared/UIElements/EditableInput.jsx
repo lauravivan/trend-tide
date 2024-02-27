@@ -1,9 +1,7 @@
 /* eslint-disable react/prop-types */
-import FormButton from "UIElements/FormButton";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import useInput from "hooks/useInput";
-import useForm from "hooks/useForm";
-import IconModel from "@/shared/icons/IconModel";
+import Icon from "UIElements/Icon";
 import { sendRequest, getApiUrl } from "util/request";
 
 const EditableInput = ({
@@ -103,13 +101,13 @@ const EditableInput = ({
             {editMode &&
               inputRef.current &&
               inputRef.current.className.includes("invalid") && (
-                <IconModel className="text-red flex-1">close</IconModel>
+                <Icon className="text-red flex-1">close</Icon>
               )}
             {editMode &&
               inputRef.current &&
               inputRef.current.className.includes("valid") &&
               !inputRef.current.className.includes("invalid") && (
-                <IconModel className="text-green flex-1">done</IconModel>
+                <Icon className="text-green flex-1">done</Icon>
               )}
           </div>
         </div>

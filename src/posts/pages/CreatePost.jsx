@@ -1,12 +1,12 @@
 import Input from "UIElements/Input";
 import FilePicker from "UIElements/FilePicker";
-import FormButton from "UIElements/FormButton";
+// import FormButton from "UIElements/FormButton";
 import useInput from "hooks/useInput";
 import { getCredentials } from "util/store";
 import { useNavigate } from "react-router-dom";
 import { sendRequest, getApiUrl } from "util/request";
 import { useRef, useState } from "react";
-import IconModel from "@/shared/icons/IconModel";
+import Icon from "UIElements/Icon";
 
 function CreatePost() {
   const { inputResponse, validateCommonInput, validateTextArea } = useInput();
@@ -92,12 +92,12 @@ function CreatePost() {
                   imageUrl={imageUrl}
                 />
                 <button type="button" onClick={handleImageDeletion}>
-                  <IconModel>delete</IconModel>
+                  <Icon>delete</Icon>
                 </button>
               </div>
             </div>
           </div>
-          <FormButton text="Post" />
+          {/* <FormButton text="Post" /> */}
         </div>
       </form>
     </div>

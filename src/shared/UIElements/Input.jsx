@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { VisibilityIcon, VisibilityOffIcon } from "icons/Icon";
+import Icon from "UIElements/Icon";
 import { useState } from "react";
 
 const Input = ({
@@ -43,14 +43,14 @@ const Input = ({
             className={`flex ${showPassword ? "" : "hidden"}`}
             onClick={changeToHide}
           >
-            <VisibilityIcon />
+            <Icon>visibility</Icon>
           </button>
           <button
             type="button"
             className={`flex ${showPassword ? "hidden" : ""}`}
             onClick={changeToVisible}
           >
-            <VisibilityOffIcon />
+            <Icon>visibility_off</Icon>
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, forwardRef } from "react";
-import ImageNotFound from "UIElements/ImageNotFound";
-import fileReader from "util/file-reader";
+// import ImageNotFound from "UIElements/ImageNotFound";
+import fileReader from "util/fileReader";
 
 const FilePicker = forwardRef(function FilePicker(
   { imageSize, imageUrl },
@@ -82,7 +82,7 @@ const FilePicker = forwardRef(function FilePicker(
             alt="Preview"
           />
         )}
-        {!previewUrl && <ImageNotFound />}
+        {/* {!previewUrl && <ImageNotFound />} */}
       </button>
       {invalidFileMsg && (
         <small className="text-center mt-2">{invalidFileMsg}</small>

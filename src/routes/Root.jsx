@@ -3,15 +3,14 @@ import { Outlet, Link } from "react-router-dom";
 import { useAuthContext } from "context/authContext";
 import { Navigate } from "react-router-dom";
 import Input from "UIElements/Input";
-import Search from "UIElements/Search";
 import { getCredentials } from "util/store";
-import IconModel from "@/shared/icons/IconModel";
+import Icon from "UIElements/Icon";
 
 function AsideItem({ href, iconName }) {
   return (
     <li className="rounded-md text-light hover:bg-light hover:text-dark hover:opacity-85 cursor-pointer">
       <Link to={href}>
-        <IconModel fontSize="30px">{iconName}</IconModel>
+        <Icon fontSize="30px">{iconName}</Icon>
       </Link>
     </li>
   );
@@ -58,7 +57,7 @@ function Root() {
                   <form>
                     <div className="flex bg-light rounded-lg items-center">
                       <Input placeholder="Search..." className="text-dark" />
-                      <Search className="mr-3" />
+                      <Icon className="mr-3">search</Icon>
                     </div>
                   </form>
                 </li>
