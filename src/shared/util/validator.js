@@ -11,7 +11,7 @@ const validateUserName = (username) => {
 };
 
 const USERNAME_MAX_LENGTH = 15;
-const EMAIL_MAX_LENGTH = 8;
+const EMAIL_MAX_LENGTH = 40;
 const PASSWORD_MAX_LENGTH = 40;
 const POST_TITLE_MAX_LENGTH = 100;
 const POST_CONTENT_MAX_LENGTH = 1200;
