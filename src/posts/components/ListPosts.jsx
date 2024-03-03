@@ -105,7 +105,7 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
         </div>
       </div>
 
-      <div className="flex">
+      <div className="flex flex-1">
         {requestRes && requestRes.ok && (
           <div
             className={`gap-10 w-full mb-10 ${

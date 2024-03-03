@@ -1,17 +1,22 @@
 import { sendRequest, getApiUrl } from "util/request";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Icon from "UIElements/Icon";
 import Return from "UIElements/Return";
 import { getCredentials } from "util/store";
 import { useNavigate } from "react-router-dom";
 import Loading from "UIElements/Loading";
+import DeleteButton from "UIElements/DeleteButton";
 import Button from "UIElements/Button";
+import useModal from "hooks/useModal";
+import Modal from "UIElements/Modal";
 
 function Post() {
   const location = window.location.href;
   const pid = location.split("/")[5];
   const [requestRes, setRequestRes] = useState(null);
   const navigate = useNavigate();
+  const { openModal, closeModal, closed } = useModal();
+  const delBtnRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,20 +46,26 @@ function Post() {
     fetchData();
   }, [pid]);
 
-  const handleDeletionSubmit = async () => {
-    try {
-      const res = await sendRequest({
-        method: "DELETE",
-        url: getApiUrl() + "post/delete/" + getCredentials().uid + "/" + pid,
-      });
+  useEffect(() => {
+    const handleDeletionSubmit = async () => {
+      try {
+        const res = await sendRequest({
+          method: "DELETE",
+          url: getApiUrl() + "post/delete/" + getCredentials().uid + "/" + pid,
+        });
 
-      if (res.ok) {
-        navigate("/trend-tide/posts/" + getCredentials().uid);
+        if (res.ok) {
+          navigate("/trend-tide/posts/" + getCredentials().uid);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    };
+
+    if (delBtnRef.current) {
+      delBtnRef.current.addEventListener("click", handleDeletionSubmit);
     }
-  };
+  });
 
   if (requestRes && requestRes.ok) {
     return (
@@ -109,13 +120,9 @@ function Post() {
                 <Button type="submit" className="bg-green px-3">
                   Update
                 </Button>
-                <Button
-                  type="submit"
-                  className="bg-red px-3"
-                  onClick={handleDeletionSubmit}
-                >
+                <DeleteButton className="bg-red px-3" ref={delBtnRef}>
                   Delete
-                </Button>
+                </DeleteButton>
               </div>
             )}
           </div>

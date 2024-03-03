@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 const Return = ({ children }) => {
   return (
-    <div className="text-center self-center text-white m-auto flex flex-1 flex-col text-xl font-bold">
+    <div className="text-center text-white m-auto text-xl font-bold">
       {children}
     </div>
   );

@@ -9,17 +9,13 @@ const inputReducer = (state, action) => {
   const value = action.payload;
 
   const valid = {
-    textColor: "text-green",
-    bgColor: "bg-green",
-    placeholderColor: "placeholder:text-white",
+    formState: "text-white bg-green placeholder:text-white",
     isValid: true,
     value: value,
   };
 
   const invalid = {
-    textColor: "text-red",
-    bgColor: "bg-red",
-    placeholderColor: "placeholder:text-white",
+    formState: "text-white bg-red placeholder:text-white",
     isValid: false,
     value: value,
     invalidMsg: "",
@@ -165,48 +161,36 @@ const inputReducer = (state, action) => {
 };
 
 function useInput() {
-  const initialBg = "bg-white";
+  const formState = "text-dark bg-white";
 
   const [state, dispatch] = useReducer(inputReducer, {
     email: {
-      textColor: "",
-      bgColor: initialBg,
-      placeholderColor: "",
+      formState: formState,
       isValid: false,
       value: null,
     },
     username: {
-      textColor: "",
-      bgColor: initialBg,
-      placeholderColor: "",
+      formState: formState,
       isValid: false,
       value: null,
     },
     password: {
-      textColor: "",
-      bgColor: initialBg,
-      placeholderColor: "",
+      formState: formState,
       isValid: false,
       value: null,
     },
     confirmedPassword: {
-      textColor: "",
-      bgColor: initialBg,
-      placeholderColor: "",
+      formState: formState,
       isValid: false,
       value: null,
     },
     input: {
-      textColor: "",
-      bgColor: initialBg,
-      placeholderColor: "",
+      formState: formState,
       isValid: false,
       value: null,
     },
     textarea: {
-      textColor: "",
-      bgColor: initialBg,
-      placeholderColor: "",
+      formState: formState,
       isValid: false,
       value: null,
     },
