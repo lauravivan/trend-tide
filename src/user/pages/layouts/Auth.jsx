@@ -11,6 +11,11 @@ import Button from "UIElements/Button";
 import { sendRequest, getApiUrl } from "util/request";
 import Loading from "UIElements/Loading";
 import { useAuthContext } from "context/authContext";
+import {
+  USERNAME_MAX_LENGTH,
+  EMAIL_MAX_LENGTH,
+  PASSWORD_MAX_LENGTH,
+} from "util/validator";
 
 function Auth({
   cardTitle,
@@ -154,8 +159,11 @@ function Auth({
                 onChange={(e) => {
                   validateUserName(e.target.value);
                 }}
-                className={inputResponse.username.state}
-                maxLength={50}
+                className={
+                  inputResponse.username.bgColor &&
+                  inputResponse.username.placeholderColor
+                }
+                maxLength={USERNAME_MAX_LENGTH}
               />
               <small>{inputResponse.username.invalidMsg}</small>
             </div>
@@ -169,8 +177,11 @@ function Auth({
               onChange={(e) => {
                 validateEmail(e.target.value);
               }}
-              className={inputResponse.email.state}
-              maxLength={50}
+              className={
+                inputResponse.email.bgColor &&
+                inputResponse.email.placeholderColor
+              }
+              maxLength={EMAIL_MAX_LENGTH}
             />
             <small>{inputResponse.email.invalidMsg}</small>
           </div>
@@ -190,8 +201,11 @@ function Auth({
                   validatePassword(e.target.value);
                 }
               }}
-              className={inputResponse.password.state}
-              maxLength={50}
+              className={
+                inputResponse.password.bgColor &&
+                inputResponse.password.placeholderColor
+              }
+              maxLength={PASSWORD_MAX_LENGTH}
             />
             <small>{inputResponse.password.invalidMsg}</small>
           </div>
@@ -208,8 +222,11 @@ function Auth({
                     e.target.value
                   );
                 }}
-                className={inputResponse.confirmedPassword.state}
-                maxLength={50}
+                className={
+                  inputResponse.confirmedPassword.bgColor &&
+                  inputResponse.confirmedPassword.placeholderColor
+                }
+                maxLength={PASSWORD_MAX_LENGTH}
               />
               <small>{inputResponse.confirmedPassword.invalidMsg}</small>
             </div>

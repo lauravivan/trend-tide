@@ -1,18 +1,24 @@
 import Input from "UIElements/Input";
 import FilePicker from "UIElements/FilePicker";
-// import FormButton from "UIElements/FormButton";
+import Button from "UIElements/Button";
 import useInput from "hooks/useInput";
 import { getCredentials } from "util/store";
 import { useNavigate } from "react-router-dom";
 import { sendRequest, getApiUrl } from "util/request";
-import { useRef, useState } from "react";
-import Icon from "UIElements/Icon";
+import { useRef, useState, useEffect } from "react";
+import { POST_TITLE_MAX_LENGTH, POST_CONTENT_MAX_LENGTH } from "util/validator";
 
 function CreatePost() {
   const { inputResponse, validateCommonInput, validateTextArea } = useInput();
   const navigate = useNavigate();
   const filePickerRef = useRef(null);
-  const [imageUrl, setImageUrl] = useState(null);
+  const [userReturn, setUserReturn] = useState("");
+
+  useEffect(() => {
+    if (inputResponse.textarea.isValid || inputResponse.input.isValid) {
+      setUserReturn("");
+    }
+  }, [inputResponse]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +37,10 @@ function CreatePost() {
           formData.append("image", filePickerRef.current.files[0]);
         }
       }
+
+      setUserReturn("");
+    } else {
+      setUserReturn("Please verify fields.");
     }
 
     const res = await sendRequest({
@@ -45,62 +55,58 @@ function CreatePost() {
     }
   };
 
-  const handleImageDeletion = () => {
-    setImageUrl(null);
-  };
-
   return (
-    <div className="relative">
-      <form
-        onSubmit={(e) => {
-          handleFormSubmit(e);
-        }}
-      >
-        <div className="flex flex-1 m-auto flex-col content-stretch gap-y-3">
-          <Input
-            type="text"
-            placeholder="Title goes here"
+    <form
+      className="flex flex-col flex-1 gap-y-4"
+      onSubmit={(e) => {
+        handleFormSubmit(e);
+      }}
+    >
+      <div>
+        <Input
+          type="text"
+          placeholder="Title goes here"
+          onChange={(e) => {
+            validateCommonInput(e.target.value);
+          }}
+          className={`${inputResponse.input.state}`}
+          name="postTitle"
+          id="postTitle"
+          maxLength={POST_TITLE_MAX_LENGTH}
+        />
+        <small>{inputResponse.input.invalidMsg}</small>
+      </div>
+      <div className="flex flex-col flex-1">
+        <div
+          className={`flex flex-col flex-1 content-between ${inputResponse.textarea.state}`}
+        >
+          <textarea
+            className={`rounded-t-md px-2 py-3 outline-none resize-none flex-1 ${inputResponse.textarea.state}`}
+            placeholder="Share what you have to say..."
+            maxLength={POST_CONTENT_MAX_LENGTH}
             onChange={(e) => {
-              validateCommonInput(e.target.value);
+              validateTextArea(e.target.value);
             }}
-            className={`${inputResponse.input.state}`}
-            name="postTitle"
-            id="postTitle"
-            maxLength={100}
+            name="postContent"
+            id="postContent"
           />
-          <div className={`flex h-full bg-white rounded-lg`}>
-            <div
-              className={`flex flex-col flex-1 h-full content-between ${inputResponse.textarea.state}`}
-            >
-              <textarea
-                className={`rounded-md px-2 py-3 outline-none w-full resize-none flex-1 ${inputResponse.textarea.state}`}
-                placeholder="Share what you have to say..."
-                rows={6}
-                maxLength={1200}
-                onChange={(e) => {
-                  validateTextArea(e.target.value);
-                }}
-                name="postContent"
-                id="postContent"
-              ></textarea>
-              <div
-                className={`m-3 bg-gray rounded flex gap-x-2 items-center justify-center py-6 cursor-pointer hover:opacity-90`}
-              >
-                <FilePicker
-                  imageSize="w-10 h-10"
-                  ref={filePickerRef}
-                  imageUrl={imageUrl}
-                />
-                <button type="button" onClick={handleImageDeletion}>
-                  <Icon>delete</Icon>
-                </button>
-              </div>
-            </div>
+          <div
+            className={`rounded-b-md bg-gray flex gap-x-2 items-center justify-center py-6 cursor-pointer hover:opacity-90 h-32`}
+          >
+            <FilePicker
+              imageSize="w-10 h-10"
+              ref={filePickerRef}
+              canRemoveImage={true}
+            />
           </div>
-          {/* <FormButton text="Post" /> */}
         </div>
-      </form>
-    </div>
+        <small>{inputResponse.textarea.invalidMsg}</small>
+      </div>
+      {userReturn && <div className="bg-black rounded p-4">{userReturn}</div>}
+      <Button type="submit" className="bg-light text-dark">
+        Post
+      </Button>
+    </form>
   );
 }
 
