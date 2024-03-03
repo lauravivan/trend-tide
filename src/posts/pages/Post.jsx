@@ -141,7 +141,8 @@ function Post() {
               {requestRes.data.image && (
                 <div className="flex justify-center">
                   <img
-                    className="rounded-lg object-center"
+                    className="rounded-lg object-center cursor-pointer"
+                    onClick={openModal}
                     src={requestRes.data.image.url}
                   />
                 </div>
@@ -157,6 +158,14 @@ function Post() {
             </div>
           </div>
         </div>
+        <Modal isClosed={closed}>
+          <div className="w-full h-full overflow-y-auto">
+            <Button className="bg-light text-dark mb-5" onClick={closeModal}>
+              Close
+            </Button>
+            <img className="w-full h-full" src={requestRes.data.image.url} />
+          </div>
+        </Modal>
       </div>
     );
   } else if (requestRes && !requestRes.ok) {
