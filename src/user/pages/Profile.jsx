@@ -5,9 +5,9 @@ import { useEffect, useState, useRef } from "react";
 import { sendRequest, getApiUrl } from "util/request";
 import DeleteButton from "UIElements/DeleteButton";
 import Loading from "UIElements/Loading";
-import Icon from "UIElements/Icon";
 import Return from "UIElements/Return";
 import { useAuthContext } from "context/authContext";
+import Icon from "UIElements/Icon";
 import {
   USERNAME_MAX_LENGTH,
   EMAIL_MAX_LENGTH,
@@ -22,6 +22,33 @@ const Profile = () => {
   const delBtnRef = useRef(null);
   const { signOut } = useAuthContext();
   const [imageUrl, setImageUrl] = useState(null);
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const confirmedPasswordRef = useRef();
+  const [enableConfirmedPassword, setEnableConfirmedPassword] = useState(false);
+  const [inputState, setInputState] = useState({
+    username: {
+      isValid: false,
+      invalidMsg: "",
+      textColor: "",
+    },
+    email: {
+      isValid: false,
+      invalidMsg: "",
+      textColor: "",
+    },
+    password: {
+      isValid: false,
+      invalidMsg: "",
+      textColor: "",
+    },
+    confirmedPassword: {
+      isValid: false,
+      invalidMsg: "",
+      textColor: "",
+    },
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,12 +68,9 @@ const Profile = () => {
           if (jsonRes.profileImage) {
             setDeleteMode(true);
             setImageUrl(jsonRes.profileImage.url);
+          } else {
+            setImageUrl(null);
           }
-        } else {
-          setAccountInfo({
-            ok: false,
-            message: jsonRes.message,
-          });
         }
       } catch (error) {
         console.log(error);
@@ -139,75 +163,188 @@ const Profile = () => {
     }
   });
 
+  const handleInputChange = async (e) => {
+    const input = e.target;
+    const resource = {};
+
+    if (input) {
+      if (input.name === "username") {
+        resource[input.name] = input.value;
+      }
+
+      if (input.name === "email") {
+        resource[input.name] = input.value;
+      }
+
+      if (input.name === "password") {
+        resource[input.name] = input.value;
+
+        setEnableConfirmedPassword(true);
+
+        if (confirmedPasswordRef.current) {
+          resource["confirmedPassword"] = confirmedPasswordRef.current.value;
+        }
+      }
+
+      if (input.name === "confirmedPassword") {
+        resource[input.name] = input.value;
+
+        if (passwordRef.current) {
+          resource["password"] = passwordRef.current.value;
+        }
+      }
+    }
+
+    const res = await sendRequest({
+      method: "PATCH",
+      url: getApiUrl() + `user/account-update/${accountInfo.data._id}`,
+      resource: resource,
+    });
+
+    const resJSON = await res.json();
+
+    if (res.ok) {
+      setInputState((prevState) => ({
+        ...prevState,
+        [input.name]: {
+          isValid: true,
+          invalidMsg: "",
+          textColor: "text-white",
+        },
+      }));
+    } else {
+      setInputState((prevState) => ({
+        ...prevState,
+        [input.name]: {
+          isValid: false,
+          invalidMsg: resJSON.message,
+          textColor: "text-red",
+        },
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (inputState.confirmedPassword.isValid) {
+      setInputState((prevState) => ({
+        ...prevState,
+        password: {
+          isValid: true,
+          invalidMsg: "",
+          textColor: "text-white",
+        },
+      }));
+    }
+
+    if (inputState.password.isValid) {
+      setEnableConfirmedPassword(false);
+    }
+  }, [inputState.password.isValid, inputState.confirmedPassword.isValid]);
+
   if (accountInfo) {
-    if (accountInfo.ok) {
-      return (
-        <div className="flex-1 m-auto flex flex-col gap-x-10 gap-y-10 md:flex-row">
-          <div className="flex flex-col gap-y-1 m-auto">
-            {imageUrl && (
-              <FilePicker
-                imageSize="w-52 h-52"
-                imageUrl={imageUrl}
-                ref={filePickerRef}
-              ></FilePicker>
-            )}
+    return (
+      <div className="flex-1 m-auto flex flex-col gap-x-10 gap-y-10 md:flex-row">
+        <div className="flex flex-col gap-y-1 m-auto">
+          {imageUrl && (
+            <FilePicker
+              imageSize="w-52 h-52"
+              imageUrl={imageUrl}
+              ref={filePickerRef}
+            ></FilePicker>
+          )}
 
-            {!imageUrl && (
-              <FilePicker
-                imageSize="w-52 h-52"
-                imageUrl={imageUrl}
-                ref={filePickerRef}
-              ></FilePicker>
-            )}
+          {!imageUrl && (
+            <FilePicker
+              imageSize="w-52 h-52"
+              imageUrl={imageUrl}
+              ref={filePickerRef}
+            ></FilePicker>
+          )}
 
-            {deleteMode && (
-              <button className="text-center mt-4" onClick={handleFileDeletion}>
-                <Icon title="Delete">delete</Icon>
-              </button>
-            )}
+          {deleteMode && (
+            <button className="text-center mt-4" onClick={handleFileDeletion}>
+              <Icon title="Delete">delete</Icon>
+            </button>
+          )}
 
-            {waitingResponse && (
-              <div className="text-center mt-4">
-                <Loading></Loading>
-              </div>
-            )}
+          {waitingResponse && (
+            <div className="text-center mt-4">
+              <Loading></Loading>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col flex-1 mb-10 md:mb-0">
+          <div className="mb-8">
+            <EditableInput
+              inputLabel="username"
+              inputName="username"
+              inputPlaceholder={accountInfo.data.username}
+              inputType="text"
+              inputMaxLength={USERNAME_MAX_LENGTH}
+              className={inputState.username.textColor}
+              ref={usernameRef}
+              onChange={handleInputChange}
+              isValid={inputState.username.isValid}
+              invalidMsg={inputState.username.invalidMsg}
+            />
           </div>
-          <div className="flex flex-col flex-1 mb-10 md:mb-0">
-            <div className="mb-8">
+          <div className="mb-8">
+            <EditableInput
+              inputLabel="email"
+              inputName="email"
+              inputPlaceholder={accountInfo.data.email}
+              inputType="text"
+              className={inputState.email.textColor}
+              inputMaxLength={EMAIL_MAX_LENGTH}
+              ref={emailRef}
+              onChange={handleInputChange}
+              isValid={inputState.email.isValid}
+              invalidMsg={inputState.email.invalidMsg}
+            />
+          </div>
+          <div className="mb-8">
+            <div className="flex">
               <EditableInput
-                inputName="username"
-                inputPlaceholder={accountInfo.data.username}
-                inputType="text"
-                inputMaxLength={USERNAME_MAX_LENGTH}
-                formAction={`user/account-update/${accountInfo.data._id}`}
-              />
-            </div>
-            <div className="mb-8">
-              <EditableInput
-                inputName="email"
-                inputPlaceholder={accountInfo.data.email}
-                inputType="text"
-                inputMaxLength={EMAIL_MAX_LENGTH}
-                formAction={`user/account-update/${accountInfo.data._id}`}
-              />
-            </div>
-            <div className="mb-8">
-              <EditableInput
+                inputLabel="password"
                 inputName="password"
                 inputType="password"
                 inputMaxLength={PASSWORD_MAX_LENGTH}
-                formAction={`user/account-update/${accountInfo.data._id}`}
+                className={inputState.password.textColor}
+                ref={passwordRef}
+                onChange={handleInputChange}
+                isValid={
+                  inputState.password.isValid &&
+                  inputState.confirmedPassword.isValid
+                }
               />
+              {enableConfirmedPassword && (
+                <EditableInput
+                  inputLabel="confirmed password"
+                  inputName="confirmedPassword"
+                  inputType="password"
+                  inputMaxLength={PASSWORD_MAX_LENGTH}
+                  className={inputState.confirmedPassword.textColor}
+                  ref={confirmedPasswordRef}
+                  onChange={handleInputChange}
+                  isValid={
+                    inputState.password.isValid &&
+                    inputState.confirmedPassword.isValid
+                  }
+                />
+              )}
             </div>
-            <DeleteButton className="flex-1" ref={delBtnRef}>
-              Delete account
-            </DeleteButton>
+            {inputState.password.invalidMsg && (
+              <small className="mt-1 text-red">
+                {inputState.password.invalidMsg}
+              </small>
+            )}
           </div>
+          <DeleteButton className="flex-1" ref={delBtnRef}>
+            Delete account
+          </DeleteButton>
         </div>
-      );
-    } else {
-      return <Return>{accountInfo.message}</Return>;
-    }
+      </div>
+    );
   } else {
     return (
       <Return>
