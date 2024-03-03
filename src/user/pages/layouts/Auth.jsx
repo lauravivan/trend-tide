@@ -159,10 +159,7 @@ function Auth({
                 onChange={(e) => {
                   validateUserName(e.target.value);
                 }}
-                className={
-                  inputResponse.username.bgColor &&
-                  inputResponse.username.placeholderColor
-                }
+                className={inputResponse.username.formState}
                 maxLength={USERNAME_MAX_LENGTH}
               />
               <small>{inputResponse.username.invalidMsg}</small>
@@ -177,10 +174,7 @@ function Auth({
               onChange={(e) => {
                 validateEmail(e.target.value);
               }}
-              className={
-                inputResponse.email.bgColor &&
-                inputResponse.email.placeholderColor
-              }
+              className={inputResponse.email.formState}
               maxLength={EMAIL_MAX_LENGTH}
             />
             <small>{inputResponse.email.invalidMsg}</small>
@@ -201,10 +195,7 @@ function Auth({
                   validatePassword(e.target.value);
                 }
               }}
-              className={
-                inputResponse.password.bgColor &&
-                inputResponse.password.placeholderColor
-              }
+              className={inputResponse.password.formState}
               maxLength={PASSWORD_MAX_LENGTH}
             />
             <small>{inputResponse.password.invalidMsg}</small>
@@ -222,10 +213,7 @@ function Auth({
                     e.target.value
                   );
                 }}
-                className={
-                  inputResponse.confirmedPassword.bgColor &&
-                  inputResponse.confirmedPassword.placeholderColor
-                }
+                className={inputResponse.confirmedPassword.formState}
                 maxLength={PASSWORD_MAX_LENGTH}
               />
               <small>{inputResponse.confirmedPassword.invalidMsg}</small>
