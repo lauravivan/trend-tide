@@ -98,6 +98,12 @@ function Post({
                   e.stopPropagation();
                   handleBtnClick();
                 }}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
+                }}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                }}
               >
                 <span>
                   <span className="relative">
