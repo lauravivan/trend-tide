@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useState, forwardRef } from "react";
-// import ImageNotFound from "UIElements/ImageNotFound";
+import Icon from "UIElements/Icon";
 import fileReader from "util/fileReader";
 
 const FilePicker = forwardRef(function FilePicker(
-  { imageSize, imageUrl },
+  { imageSize, imageUrl, canRemoveImage = false },
   fileUploader
 ) {
   const [previewUrl, setPreviewUrl] = useState(imageUrl);
@@ -57,19 +57,21 @@ const FilePicker = forwardRef(function FilePicker(
     }
   };
 
+  const handleImageRemove = () => {
+    setPreviewUrl(null);
+  };
+
   return (
     <>
-      <label htmlFor="upload">
-        <input
-          type="file"
-          className="hidden"
-          name="upload"
-          id="upload"
-          accept=".jpg, .png, .jpeg, .gif, .svg"
-          ref={fileUploader}
-          onChange={filePickedHandler}
-        />
-      </label>
+      <input
+        type="file"
+        className="hidden"
+        name="upload"
+        id="upload"
+        accept=".jpg, .png, .jpeg, .gif, .svg"
+        ref={fileUploader}
+        onChange={filePickedHandler}
+      />
       <button
         className={`flex items-center justify-center rounded-full bg-white text-dark ${imageSize}`}
         type="button"
@@ -82,8 +84,13 @@ const FilePicker = forwardRef(function FilePicker(
             alt="Preview"
           />
         )}
-        {/* {!previewUrl && <ImageNotFound />} */}
+        {!previewUrl && <Icon className="py-2">image</Icon>}
       </button>
+      {canRemoveImage && previewUrl && (
+        <button type="button" onClick={handleImageRemove}>
+          <Icon className="text-dark">delete</Icon>
+        </button>
+      )}
       {invalidFileMsg && (
         <small className="text-center mt-2">{invalidFileMsg}</small>
       )}

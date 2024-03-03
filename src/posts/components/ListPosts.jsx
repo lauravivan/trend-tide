@@ -68,8 +68,8 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col content-between">
-      <section className="w-full flex justify-between items-center mb-4">
+    <div className="flex flex-1 flex-col">
+      <div className="flex justify-between items-center mb-4">
         <div>
           {requestRes && requestRes.ok && (
             <span>{itemsPerView + " of " + totalPosts}</span>
@@ -103,9 +103,9 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
             </span>
           </button>
         </div>
-      </section>
+      </div>
 
-      <section className="w-full flex flex-1">
+      <div className="flex">
         {requestRes && requestRes.ok && (
           <div
             className={`gap-10 w-full mb-10 ${
@@ -122,7 +122,7 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
 
                 if (index < pageCounter) {
                   return (
-                    <div key={post._id}>
+                    <div className="flex" key={post._id}>
                       <Post
                         author={post.author.username}
                         title={post.title}
@@ -148,9 +148,9 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
             <Loading />
           </Return>
         )}
-      </section>
+      </div>
 
-      <section className="mt-10 mb-0">
+      <div className="mt-10 mb-0">
         {pageCounter < totalPosts && (
           <div className="text-center mt-5 mb-10">
             <button
@@ -174,7 +174,7 @@ const ListPosts = ({ actionPath, maxLength = 10 }) => {
             </button>
           </div>
         )}
-      </section>
+      </div>
     </div>
   );
 };

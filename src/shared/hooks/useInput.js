@@ -9,13 +9,17 @@ const inputReducer = (state, action) => {
   const value = action.payload;
 
   const valid = {
-    state: "bg-green placeholder:text-white",
+    textColor: "text-green",
+    bgColor: "bg-green",
+    placeholderColor: "placeholder:text-white",
     isValid: true,
     value: value,
   };
 
   const invalid = {
-    state: "bg-red placeholder:text-white",
+    textColor: "text-red",
+    bgColor: "bg-red",
+    placeholderColor: "placeholder:text-white",
     isValid: false,
     value: value,
     invalidMsg: "",
@@ -49,12 +53,12 @@ const inputReducer = (state, action) => {
           ...state,
           username: invalid,
         };
+      } else {
+        return {
+          ...state,
+          username: valid,
+        };
       }
-
-      return {
-        ...state,
-        username: valid,
-      };
     }
 
     case "VALIDATE_PASSWORD": {
@@ -125,6 +129,8 @@ const inputReducer = (state, action) => {
     }
 
     case "VALIDATE_COMMON_INPUT":
+      invalid["invalidMsg"] = "A title for the post is expected.";
+
       if (value.length > 0) {
         return {
           ...state,
@@ -138,6 +144,8 @@ const inputReducer = (state, action) => {
       };
 
     case "VALIDATE_TEXTAREA":
+      invalid["invalidMsg"] = "A content for the post is expected.";
+
       if (value.length > 0) {
         return {
           ...state,
@@ -157,35 +165,48 @@ const inputReducer = (state, action) => {
 };
 
 function useInput() {
-  const initialState = "bg-white text-black invalid";
+  const initialBg = "bg-white";
+
   const [state, dispatch] = useReducer(inputReducer, {
     email: {
-      state: initialState,
+      textColor: "",
+      bgColor: initialBg,
+      placeholderColor: "",
       isValid: false,
       value: null,
     },
     username: {
-      state: initialState,
+      textColor: "",
+      bgColor: initialBg,
+      placeholderColor: "",
       isValid: false,
       value: null,
     },
     password: {
-      state: initialState,
+      textColor: "",
+      bgColor: initialBg,
+      placeholderColor: "",
       isValid: false,
       value: null,
     },
     confirmedPassword: {
-      state: initialState,
+      textColor: "",
+      bgColor: initialBg,
+      placeholderColor: "",
       isValid: false,
       value: null,
     },
     input: {
-      state: initialState,
+      textColor: "",
+      bgColor: initialBg,
+      placeholderColor: "",
       isValid: false,
       value: null,
     },
     textarea: {
-      state: initialState,
+      textColor: "",
+      bgColor: initialBg,
+      placeholderColor: "",
       isValid: false,
       value: null,
     },

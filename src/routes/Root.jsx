@@ -54,7 +54,7 @@ function Root() {
             </ul>
           </nav>
         </aside>
-        <div className="flex flex-col flex-1 ms-20">
+        <div className="h-full flex flex-col flex-1 ms-20">
           <header className="bg-dark text-white md:rounded-tr-lg md:px-4 py-1">
             <nav className="px-3 py-4">
               <ul className="flex flex-col gap-y-3 md:gap-y-0 sm:flex-row sm:justify-between sm:items-center">
@@ -80,8 +80,10 @@ function Root() {
               </ul>
             </nav>
           </header>
-          <main className="text-light md:p-10 overflow-y-auto overflow-x-hidden">
-            <Outlet />
+          <main className="h-full text-light overflow-y-auto overflow-x-hidden">
+            <section className="h-full flex p-5">
+              <Outlet />
+            </section>
           </main>
         </div>
       </div>

@@ -1,118 +1,92 @@
 /* eslint-disable react/prop-types */
-import { useState, useRef } from "react";
-import useInput from "hooks/useInput";
+import { useState, useRef, useEffect } from "react";
 import Icon from "UIElements/Icon";
+import useInput from "hooks/useInput";
 import { sendRequest, getApiUrl } from "util/request";
 
 const EditableInput = ({
   inputName,
-  inputValue,
+  inputPlaceholder,
   inputType,
-  formAction,
   inputMaxLength,
+  formAction,
 }) => {
-  const { inputResponse, validateUserName, validateEmail, validatePassword } =
-    useInput();
-  const [editMode, setEditMode] = useState(false);
-  const inputRef = useRef(null);
+  const [invalidMsg, setInvalidMsg] = useState("");
+  const editableInputRef = useRef();
+  const invalidClass = "text-red";
+  const validClass = "text-green";
+  const neutralClass = "text-white";
 
-  const handleInputOnChange = () => {
-    setEditMode(true);
-    const i = inputRef.current;
+  const handleInputChange = async () => {
+    const ref = editableInputRef.current;
 
-    if (!i) return;
+    const res = await sendRequest({
+      method: "PATCH",
+      url: getApiUrl() + formAction,
+      resource: {
+        [ref.name]: ref.value,
+      },
+    });
+    const resJSON = await res.json();
 
-    if (i.name === "username") {
-      validateUserName(i.value);
-    }
-
-    if (i.name === "email") {
-      validateEmail(i.value);
-    }
-
-    if (i.name === "password") {
-      validatePassword(i.value);
-    }
-
-    const iRes = inputResponse[i.name];
-
-    const valid = ["valid", "text-green"];
-    const invalid = ["invalid", "text-red"];
-
-    if (iRes.isValid) {
-      i.classList.add(...valid);
-      i.classList.remove(...invalid);
+    if (res.ok) {
+      setInvalidMsg("");
+      handleValidation([neutralClass], [invalidClass, validClass]);
     } else {
-      i.classList.add(...invalid);
-      i.classList.remove(...valid);
+      setInvalidMsg(resJSON.message);
+      handleValidation([invalidClass], [validClass, neutralClass]);
     }
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const handleValidation = (classesToAdd, classesToRemove) => {
+    const ref = editableInputRef.current;
 
-    if (inputRef.current.className.includes("valid")) {
-      const res = await sendRequest({
-        method: "PATCH",
-        url: getApiUrl() + formAction,
-        resource: {
-          [inputRef.current.name]: inputRef.current.value,
-        },
-      });
-
-      if (res.ok) {
-        setEditMode(false);
-      }
-    }
+    ref.classList.add(...classesToAdd);
+    ref.classList.remove(...classesToRemove);
   };
-
-  if (!editMode) {
-    const valid = ["valid", "text-green"];
-    const invalid = ["invalid", "text-red"];
-
-    if (inputRef.current) {
-      inputRef.current.classList.remove(...valid, ...invalid);
-    }
-  }
 
   return (
-    <div>
-      <form
-        onSubmit={(e) => {
-          handleFormSubmit(e);
-        }}
-      >
-        <div className="flex flex-col cursor-pointer">
-          <small className="uppercase">{inputName}</small>
-          <div className="flex">
+    <form onSubmit={(e) => e.preventDefault()}>
+      <div className="flex flex-col cursor-pointer">
+        <small className="uppercase">{inputName}</small>
+        <div className="flex flex-col">
+          <div className="flex items-center">
             <input
               type={inputType}
-              className="text-sm bg-dark outline-none flex-1"
+              className={`text-sm bg-dark outline-none flex-1`}
+              placeholder={
+                inputType === "password"
+                  ? "................."
+                  : inputPlaceholder
+              }
+              name={inputName}
+              id={inputName}
+              autoComplete="off"
+              maxLength={inputMaxLength}
+              onChange={handleInputChange}
+              ref={editableInputRef}
+            />
+            {invalidMsg && <Icon className="text-red flex-1">close</Icon>}
+          </div>
+          <small className="mt-1 text-red">{invalidMsg}</small>
+          <div>
+            {/* <input
+              type={inputType}
+              className={`text-sm bg-dark outline-none flex-1 ${className}`}
               placeholder={
                 inputType === "password" ? "................." : inputValue
               }
               name={inputName}
               id={inputName}
-              onChange={handleInputOnChange}
+              onChange={onChange}
               autoComplete="off"
-              ref={inputRef}
+              ref={editableInputRef}
               maxLength={inputMaxLength}
-            />
-            {editMode &&
-              inputRef.current &&
-              inputRef.current.className.includes("invalid") && (
-                <Icon className="text-red flex-1">close</Icon>
-              )}
-            {editMode &&
-              inputRef.current &&
-              inputRef.current.className.includes("valid") &&
-              !inputRef.current.className.includes("invalid") && (
-                <Icon className="text-green flex-1">done</Icon>
-              )}
+            /> */}
           </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

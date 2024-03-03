@@ -1,6 +1,5 @@
 import { getCredentials } from "util/store";
 import FilePicker from "UIElements/FilePicker";
-import Button from "UIElements/Button";
 import EditableInput from "UIElements/EditableInput";
 import { useEffect, useState, useRef } from "react";
 import { sendRequest, getApiUrl } from "util/request";
@@ -9,33 +8,20 @@ import Loading from "UIElements/Loading";
 import Icon from "UIElements/Icon";
 import Return from "UIElements/Return";
 import { useAuthContext } from "context/authContext";
+import {
+  USERNAME_MAX_LENGTH,
+  EMAIL_MAX_LENGTH,
+  PASSWORD_MAX_LENGTH,
+} from "util/validator";
 
 const Profile = () => {
-  const [requestRes, setRequestRes] = useState(null);
+  const [accountInfo, setAccountInfo] = useState(null);
   const filePickerRef = useRef(null);
   const [deleteMode, setDeleteMode] = useState(false);
-  const [editMode, setEditMode] = useState(false);
   const [waitingResponse, setWaitingResponse] = useState(false);
   const delBtnRef = useRef(null);
   const { signOut } = useAuthContext();
-
-  useEffect(() => {
-    if (delBtnRef.current) {
-      delBtnRef.current.addEventListener("click", handleAccountDeletion);
-
-      return () => {
-        delBtnRef.current.removeEventListener("click", handleAccountDeletion);
-      };
-    }
-
-    if (filePickerRef.current) {
-      filePickerRef.current.addEventListener("change", handleFileChange);
-
-      return () => {
-        filePickerRef.current.removeEventListener("change", handleFileChange);
-      };
-    }
-  });
+  const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,16 +33,17 @@ const Profile = () => {
         const jsonRes = await res.json();
 
         if (res.ok) {
-          setRequestRes({
+          setAccountInfo({
             ok: true,
             data: jsonRes,
           });
 
           if (jsonRes.profileImage) {
             setDeleteMode(true);
+            setImageUrl(jsonRes.profileImage.url);
           }
         } else {
-          setRequestRes({
+          setAccountInfo({
             ok: false,
             message: jsonRes.message,
           });
@@ -69,33 +56,9 @@ const Profile = () => {
     fetchData();
   }, []);
 
-  const handleFileSubmission = async () => {
-    setWaitingResponse(true);
-
-    const formData = new FormData();
-
-    formData.append("image", filePickerRef.current.files[0]);
-
-    try {
-      const res = await sendRequest({
-        method: "PATCH",
-        url: getApiUrl() + `user/account-update/${getCredentials().uid}`,
-        isJSON: false,
-        resource: formData,
-      });
-
-      if (res.ok) {
-        setWaitingResponse(false);
-        setEditMode(false);
-        setDeleteMode(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleFileDeletion = async () => {
     setWaitingResponse(true);
+    setDeleteMode(false);
 
     try {
       const res = await sendRequest({
@@ -105,104 +68,145 @@ const Profile = () => {
 
       if (res.ok) {
         setWaitingResponse(false);
-        setDeleteMode(false);
+        setImageUrl(null);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleFileChange = () => {
-    setTimeout(() => {
-      if (filePickerRef.current.className.includes("valid")) {
-        setEditMode(true);
-      } else {
-        setEditMode(false);
-      }
-    }, 100);
-  };
+  useEffect(() => {
+    const handleFilePickerChange = async () => {
+      setWaitingResponse(true);
+      setDeleteMode(false);
 
-  const handleAccountDeletion = async () => {
-    try {
-      const res = await sendRequest({
-        method: "DELETE",
-        url: getApiUrl() + `user/delete-account/${getCredentials().uid}`,
-      });
+      const formData = new FormData();
 
-      if (res.ok) {
-        signOut();
+      formData.append("image", filePickerRef.current.files[0]);
+
+      try {
+        const res = await sendRequest({
+          method: "PATCH",
+          url: getApiUrl() + `user/account-update/${getCredentials().uid}`,
+          isJSON: false,
+          resource: formData,
+        });
+
+        if (res.ok) {
+          setWaitingResponse(false);
+          setDeleteMode(true);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+
+      try {
+        const res = await sendRequest({
+          url: getApiUrl() + "user/account-info/" + getCredentials().uid,
+        });
+
+        if (res.ok) {
+          const resJSON = await res.json();
+
+          setImageUrl(resJSON.profileImage.url);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const handleAccountDeletion = async () => {
+      try {
+        const res = await sendRequest({
+          method: "DELETE",
+          url: getApiUrl() + `user/delete-account/${getCredentials().uid}`,
+        });
+
+        if (res.ok) {
+          signOut();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (filePickerRef.current) {
+      filePickerRef.current.addEventListener("change", handleFilePickerChange);
     }
-  };
 
-  if (requestRes) {
-    if (requestRes.ok) {
+    if (delBtnRef.current) {
+      delBtnRef.current.addEventListener("click", handleAccountDeletion);
+    }
+  });
+
+  if (accountInfo) {
+    if (accountInfo.ok) {
       return (
-        <section className="text-light flex flex-col gap-y-12 md:gap-x-10 md:flex-row rounded md:my-5 md:mx-3">
-          <div className="flex flex-col mt-10 md:mt-0 md:flex-1 justify-items-center">
-            <div className="flex flex-col gap-y-1 md:m-auto">
+        <div className="flex-1 m-auto flex flex-col gap-x-10 gap-y-10 md:flex-row">
+          <div className="flex flex-col gap-y-1 m-auto">
+            {imageUrl && (
               <FilePicker
                 imageSize="w-52 h-52"
-                imageUrl={requestRes.data.profileImage.url || null}
+                imageUrl={imageUrl}
                 ref={filePickerRef}
               ></FilePicker>
+            )}
 
-              {editMode && (
-                <Button
-                  type="submit"
-                  className="bg-light text-dark"
-                  onClick={handleFileSubmission}
-                >
-                  Choose this
-                </Button>
-              )}
+            {!imageUrl && (
+              <FilePicker
+                imageSize="w-52 h-52"
+                imageUrl={imageUrl}
+                ref={filePickerRef}
+              ></FilePicker>
+            )}
 
-              {deleteMode && (
-                <button
-                  className="text-center mt-4"
-                  onClick={handleFileDeletion}
-                >
-                  <Icon title="Delete">delete</Icon>
-                </button>
-              )}
+            {deleteMode && (
+              <button className="text-center mt-4" onClick={handleFileDeletion}>
+                <Icon title="Delete">delete</Icon>
+              </button>
+            )}
 
-              {waitingResponse && (
-                <div className="text-center mt-4">
-                  <Loading></Loading>
-                </div>
-              )}
+            {waitingResponse && (
+              <div className="text-center mt-4">
+                <Loading></Loading>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col flex-1 mb-10 md:mb-0">
+            <div className="mb-8">
+              <EditableInput
+                inputName="username"
+                inputPlaceholder={accountInfo.data.username}
+                inputType="text"
+                inputMaxLength={USERNAME_MAX_LENGTH}
+                formAction={`user/account-update/${accountInfo.data._id}`}
+              />
             </div>
+            <div className="mb-8">
+              <EditableInput
+                inputName="email"
+                inputPlaceholder={accountInfo.data.email}
+                inputType="text"
+                inputMaxLength={EMAIL_MAX_LENGTH}
+                formAction={`user/account-update/${accountInfo.data._id}`}
+              />
+            </div>
+            <div className="mb-8">
+              <EditableInput
+                inputName="password"
+                inputType="password"
+                inputMaxLength={PASSWORD_MAX_LENGTH}
+                formAction={`user/account-update/${accountInfo.data._id}`}
+              />
+            </div>
+            <DeleteButton className="flex-1" ref={delBtnRef}>
+              Delete account
+            </DeleteButton>
           </div>
-          <div className="flex flex-col gap-y-10 mx-4 md:flex-1 md:m-auto">
-            <EditableInput
-              inputName="username"
-              inputValue={requestRes.data.username}
-              inputType="text"
-              formAction={`user/account-update/${requestRes.data._id}`}
-              inputMaxLength={50}
-            />
-            <EditableInput
-              inputName="email"
-              inputValue={requestRes.data.email}
-              inputType="text"
-              formAction={`user/account-update/${requestRes.data._id}`}
-              inputMaxLength={50}
-            />
-            <EditableInput
-              inputName="password"
-              inputValue={requestRes.data.password}
-              inputType="password"
-              formAction={`user/account-update/${requestRes.data._id}`}
-              inputMaxLength={50}
-            />
-            <DeleteButton ref={delBtnRef}>Delete account</DeleteButton>
-          </div>
-        </section>
+        </div>
       );
     } else {
-      return <Return>{requestRes.message}</Return>;
+      return <Return>{accountInfo.message}</Return>;
     }
   } else {
     return (

@@ -69,23 +69,21 @@ function Post({
   };
 
   return (
-    <Link className="w-full" to={"/trend-tide/view-post/" + pid}>
-      <article className="w-full bg-light rounded-lg flex flex-col gap-y-3 px-4 py-3 cursor-pointer text-dark">
+    <Link className="w-full flex" to={"/trend-tide/view-post/" + pid}>
+      <article className="w-full bg-light rounded-lg flex flex-1 flex-col gap-y-3 px-4 py-3 cursor-pointer text-dark hover:opacity-95">
         <h2 className="text-md font-bold truncate overflow-hidden">{title}</h2>
         <p className="text-xs truncate overflow-hidden">{content}</p>
-        <div className="rounded-lg w-full">
+        <div className="rounded-lg w-full flex h-40">
           {imageUrl && (
-            <img
-              className="rounded-lg object-cover w-full h-40"
-              src={imageUrl}
-            />
+            <img className="rounded-lg object-cover w-full" src={imageUrl} />
           )}
-          {/* {!imageUrl && (
-            <ImageNotFound
-              className="w-full h-40 bg-gray rounded-lg text-light flex justify-center items-center"
-              fontSize={"40px"}
-            />
-          )} */}
+          {!imageUrl && (
+            <div className="w-full bg-gray rounded-lg text-light text-center flex items-center">
+              <Icon className="w-full" fontSize={"40px"}>
+                image
+              </Icon>
+            </div>
+          )}
         </div>
         <footer className="flex justify-between items-center mt-auto">
           {checkFavorite && (
@@ -106,7 +104,7 @@ function Post({
                     <span className="absolute text-dark bottom-2 -right-3">
                       {likes}
                     </span>
-                    {!isFavorited && <Icon>favorite</Icon>}
+                    {!isFavorited && <Icon>favorite_border</Icon>}
                     {isFavorited && <Icon className="text-red">favorite</Icon>}
                   </span>
                 </span>
