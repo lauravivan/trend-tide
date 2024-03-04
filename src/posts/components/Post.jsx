@@ -22,7 +22,6 @@ function Post({
 
   const handleFavorite = async (e) => {
     e.preventDefault();
-    e.stopPropagation();
 
     setIsFavorited(!isFavorited);
 
