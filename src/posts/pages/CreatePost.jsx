@@ -69,7 +69,7 @@ function CreatePost() {
           onChange={(e) => {
             validateCommonInput(e.target.value);
           }}
-          className={`${inputResponse.input.state}`}
+          className={`${inputResponse.input.formState}`}
           name="postTitle"
           id="postTitle"
           maxLength={POST_TITLE_MAX_LENGTH}
@@ -78,10 +78,10 @@ function CreatePost() {
       </div>
       <div className="flex flex-col flex-1">
         <div
-          className={`flex flex-col flex-1 content-between ${inputResponse.textarea.state}`}
+          className={`flex flex-col rounded-t rounded-b flex-1 content-between ${inputResponse.textarea.formState}`}
         >
           <textarea
-            className={`rounded-t-md px-2 py-3 outline-none resize-none flex-1 ${inputResponse.textarea.state}`}
+            className={`rounded-t px-2 py-3 outline-none resize-none flex-1 ${inputResponse.textarea.formState}`}
             placeholder="Share what you have to say..."
             maxLength={POST_CONTENT_MAX_LENGTH}
             onChange={(e) => {
@@ -91,7 +91,7 @@ function CreatePost() {
             id="postContent"
           />
           <div
-            className={`rounded-b-md bg-gray flex gap-x-2 items-center justify-center py-6 cursor-pointer hover:opacity-90 h-32`}
+            className={`rounded-b bg-gray flex gap-x-2 items-center justify-center py-6 cursor-pointer hover:opacity-90 h-32`}
           >
             <FilePicker
               imageSize="w-10 h-10"
