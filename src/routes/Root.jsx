@@ -65,7 +65,9 @@ function Root() {
                   <form>
                     <div className="flex bg-light rounded-lg items-center">
                       <Input placeholder="Search..." className="text-dark" />
-                      <Icon className="mr-3">search</Icon>
+                      <Icon className="mr-3 text-dark" fontSize="25px">
+                        search
+                      </Icon>
                     </div>
                   </form>
                 </li>
