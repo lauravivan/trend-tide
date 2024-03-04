@@ -53,7 +53,7 @@ function Post({
   };
 
   return (
-    <Link className="w-full flex" to={"/trend-tide/view-post/" + pid}>
+    <Link className="w-full" to={"/trend-tide/view-post/" + pid}>
       <article className="w-full bg-light rounded-lg flex flex-1 flex-col gap-y-3 px-4 py-3 cursor-pointer text-dark hover:opacity-95">
         <h2 className="text-md font-bold truncate overflow-hidden">{title}</h2>
         <p className="text-xs truncate overflow-hidden">{content}</p>
