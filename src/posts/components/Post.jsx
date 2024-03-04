@@ -76,6 +76,7 @@ function Post({
               type="button"
               onClick={handleFavorite}
               onTouchStart={handleFavorite}
+              onTouchEnd={handleFavorite}
             >
               <span>
                 <span className="relative">
