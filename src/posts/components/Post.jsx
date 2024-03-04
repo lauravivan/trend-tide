@@ -20,51 +20,36 @@ function Post({
   const [isFavorited, setIsFavorited] = useState(isFavorite);
   const [likes, setLikes] = useState(qntOfLikes);
 
-  const handleBtnClick = () => {
-    setIsFavorited(!isFavorited);
-  };
-
-  const handleSubmit = async (e) => {
+  const handleFavorite = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
 
-    if (!isFavorited) {
-      try {
-        const res = await sendRequest({
-          method: "PATCH",
-          url:
-            getApiUrl() +
-            "user/remove-favorite-post/" +
-            getCredentials().uid +
-            "/" +
-            pid,
-          isJSON: false,
-        });
+    setIsFavorited(!isFavorited);
 
-        if (res.ok) {
-          setLikes((prevLikes) => prevLikes - 1);
-        }
-      } catch (error) {
-        console.log(error);
+    const removeUrl = `${getApiUrl()}user/remove-favorite-post/${
+      getCredentials().uid
+    }/${pid}`;
+
+    const addUrl = `${getApiUrl()}user/add-favorite-post/${
+      getCredentials().uid
+    }/${pid}`;
+
+    try {
+      const res = await sendRequest({
+        method: "PATCH",
+        url: isFavorited ? removeUrl : addUrl,
+        isJSON: false,
+      });
+
+      if (res.ok && isFavorited) {
+        setLikes((prevLikes) => prevLikes - 1);
       }
-    } else {
-      try {
-        const res = await sendRequest({
-          method: "PATCH",
-          url:
-            getApiUrl() +
-            "user/add-favorite-post/" +
-            getCredentials().uid +
-            "/" +
-            pid,
-          isJSON: false,
-        });
 
-        if (res.ok) {
-          setLikes((prevLikes) => prevLikes + 1);
-        }
-      } catch (error) {
-        console.log(error);
+      if (res.ok && !isFavorited) {
+        setLikes((prevLikes) => prevLikes + 1);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -87,35 +72,21 @@ function Post({
         </div>
         <footer className="flex justify-between items-center mt-auto">
           {checkFavorite && (
-            <form
-              onSubmit={(e) => {
-                handleSubmit(e);
-              }}
+            <button
+              type="button"
+              onClick={handleFavorite}
+              onTouchStart={handleFavorite}
             >
-              <button
-                type="submit"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleBtnClick();
-                }}
-                onTouchStart={(e) => {
-                  e.stopPropagation();
-                }}
-                onTouchEnd={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <span>
-                  <span className="relative">
-                    <span className="absolute text-dark bottom-2 -right-3">
-                      {likes}
-                    </span>
-                    {!isFavorited && <Icon>favorite_border</Icon>}
-                    {isFavorited && <Icon className="text-red">favorite</Icon>}
+              <span>
+                <span className="relative">
+                  <span className="absolute text-dark bottom-2 -right-3">
+                    {likes}
                   </span>
+                  {!isFavorited && <Icon>favorite_border</Icon>}
+                  {isFavorited && <Icon className="text-red">favorite</Icon>}
                 </span>
-              </button>
-            </form>
+              </span>
+            </button>
           )}
           <span className="uppercase font-bold">{author}</span>
           <span className="text-xs font-semibold">
