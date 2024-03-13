@@ -63,9 +63,12 @@ function Root() {
                 </li>
                 <li className="w-full sm:w-[50%]">
                   <form>
-                    <div className="flex bg-light rounded-lg items-center">
-                      <Input placeholder="Search..." className="text-dark" />
-                      <Icon className="mr-3 text-dark" fontSize="25px">
+                    <div className="flex border border-gray outline-none rounded-lg items-center bg-dark">
+                      <Input
+                        placeholder="Search..."
+                        className="text-light bg-dark"
+                      />
+                      <Icon className="mr-3 text-light" fontSize="25px">
                         search
                       </Icon>
                     </div>

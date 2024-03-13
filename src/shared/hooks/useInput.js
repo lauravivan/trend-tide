@@ -161,7 +161,7 @@ const inputReducer = (state, action) => {
 };
 
 function useInput() {
-  const formState = "text-dark bg-white";
+  const formState = "text-light bg-lighter-gray placeholder-light";
 
   const [state, dispatch] = useReducer(inputReducer, {
     email: {

@@ -133,7 +133,7 @@ function Post() {
                 {requestRes.data.title}
               </h1>
             </div>
-            <div className="bg-light rounded text-dark py-6 px-10 flex flex-col gap-y-5">
+            <div className="bg-lighter-gray rounded text-light py-6 px-10 flex flex-col gap-y-5">
               <p className="text-wrap break-all text-md flex-1 text-center">
                 {requestRes.data.content}
               </p>

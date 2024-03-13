@@ -77,9 +77,7 @@ function CreatePost() {
         <small>{inputResponse.input.invalidMsg}</small>
       </div>
       <div className="flex flex-col flex-1">
-        <div
-          className={`flex flex-col rounded-t rounded-b flex-1 content-between ${inputResponse.textarea.formState}`}
-        >
+        <div className="flex flex-col rounded-t rounded-b flex-1 content-between">
           <textarea
             className={`rounded-t px-2 py-3 outline-none resize-none flex-1 ${inputResponse.textarea.formState}`}
             placeholder="Share what you have to say..."
@@ -91,7 +89,7 @@ function CreatePost() {
             id="postContent"
           />
           <div
-            className={`rounded-b bg-gray flex gap-x-2 items-center justify-center py-6 cursor-pointer hover:opacity-90 h-32`}
+            className={`rounded-b bg-black flex gap-x-2 items-center justify-center py-6 cursor-pointer hover:opacity-90 h-32`}
           >
             <FilePicker
               imageSize="w-10 h-10"
@@ -103,9 +101,13 @@ function CreatePost() {
         <small>{inputResponse.textarea.invalidMsg}</small>
       </div>
       {userReturn && <div className="bg-black rounded p-4">{userReturn}</div>}
-      <Button type="submit" className="bg-light text-dark">
-        Post
-      </Button>
+      <div className="flex justify-center">
+        <div className="w-1/5">
+          <Button type="submit" className="bg-light text-dark">
+            Post
+          </Button>
+        </div>
+      </div>
     </form>
   );
 }
