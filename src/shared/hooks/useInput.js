@@ -96,12 +96,12 @@ const inputReducer = (state, action) => {
         return {
           ...state,
           password: {
-            state: invalid["state"],
+            formState: invalid["formState"],
             isValid: invalid["isValid"],
             value: value.password,
           },
           confirmedPassword: {
-            state: invalid["state"],
+            formState: invalid["formState"],
             isValid: invalid["isValid"],
             value: value.passwordConfirmed,
             invalidMsg: invalidMsg,
@@ -112,12 +112,12 @@ const inputReducer = (state, action) => {
       return {
         ...state,
         password: {
-          state: valid["state"],
+          formState: valid["formState"],
           isValid: valid["isValid"],
           value: value.password,
         },
         confirmedPassword: {
-          state: valid["state"],
+          formState: valid["formState"],
           isValid: valid["isValid"],
           value: value.passwordConfirmed,
         },
