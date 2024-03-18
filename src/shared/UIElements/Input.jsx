@@ -26,18 +26,20 @@ const Input = ({
 
   if (type === "password") {
     return (
-      <div className={`flex rounded-lg ${className}`}>
+      <div className="flex rounded-lg">
         <input
           type={coverPass}
           placeholder={placeholder}
-          className={`rounded-md px-2 py-3 outline-none w-full ${className}`}
+          className={`rounded-l-md px-2 py-3 outline-none w-full ${className}`}
           maxLength={maxLength}
           autoComplete="off"
           onChange={onChange}
           id={id}
           name={name}
         />
-        <div className={`flex items-center mr-3`}>
+        <div
+          className={`flex flex-1 items-center rounded-r-md p-3 ${className}`}
+        >
           <button
             type="button"
             className={`flex ${showPassword ? "" : "hidden"}`}
