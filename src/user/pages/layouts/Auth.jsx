@@ -63,7 +63,7 @@ function Auth({
       }
 
       if (hasPassConfirmed && inputResponse.confirmedPassword.isValid) {
-        data["passwordConfirmed"] = inputResponse.confirmedPassword.value;
+        data["confirmedPassword"] = inputResponse.confirmedPassword.value;
       }
 
       try {
